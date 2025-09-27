@@ -1,0 +1,32 @@
+<div class="flex justify-between items-center mb-4">
+    <h3 class="text-lg font-semibold text-gray-800 dark:text-white">{{.Month}} {{.Year}}</h3>
+    <div class="flex space-x-2">
+        <button id="prev-month-btn" class="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
+            <i data-feather="chevron-left"></i>
+        </button>
+        <button id="next-month-btn" class="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
+            <i data-feather="chevron-right"></i>
+        </button>
+    </div>
+</div>
+<div class="grid grid-cols-7 gap-1 mb-2">
+    {{range .DaysOfWeek}}
+    <div class="text-center text-xs font-medium text-gray-500 dark:text-gray-400">{{.}}</div>
+    {{end}}
+</div>
+<div class="grid grid-cols-7 gap-1" id="calendar-grid-user">
+    {{range .Days}}
+        {{if .Number | eq 0}}
+        <div class="h-8"></div>
+        {{else}}
+        <div class="calendar-day h-8 flex items-center justify-center text-sm rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 relative {{if .IsToday}}bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700{{end}}" data-day="{{.Number}}">
+            {{.Number}}
+            {{if .Appointments}}
+            <span class="appointment-dot absolute h-2 w-2 bg-teal-500 rounded-full bottom-1"></span>
+            {{end}}
+        </div>
+        {{end}}
+    {{end}}
+</div>
+
+

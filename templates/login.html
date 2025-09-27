@@ -1,0 +1,72 @@
+{{template "header.html" .}}
+<main>
+    <!-- Hero Section -->
+    <!-- <section class="login-hero text-white py-32" style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('http://static.photos/automotive/1200x630/5'); background-size: cover; background-position: center;"> -->
+    <!--     <div class="container mx-auto px-4 text-center"> -->
+    <!--         <h1 class="text-4xl md:text-5xl font-bold mb-6" data-aos="fade-up">Customer Login</h1> -->
+    <!--         <p class="text-xl mb-8 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100"> -->
+    <!--             Access your account to manage appointments and view service history -->
+    <!--         </p> -->
+    <!--     </div> -->
+    <!-- </section> -->
+
+    <!-- Login Form -->
+    <section class="py-16 bg-gray-50 dark:bg-gray-900 min-h-screen flex items-center">
+        <div class="container mx-auto px-4">
+            <div class="max-w-md mx-auto bg-white dark:bg-gray-800 p-8 rounded-lg login-card">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold mb-2">Welcome Back</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Please enter your credentials to login</p>
+                </div>
+
+                {{if .Error}}
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <strong class="font-bold">Error: </strong>
+                    <span class="block sm:inline">{{.Error}}</span>
+                </div>
+                {{end}}
+                {{if .Success}}
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <strong class="font-bold">Success! </strong>
+                    <span class="block sm:inline">{{.Success}}</span>
+                </div>
+                {{end}}
+
+                <form method="POST" action="/login" class="space-y-6">
+                    <div>
+                        <label for="email" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">Email Address</label>
+                        <div class="relative">
+                            <i data-feather="mail" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input type="email" id="email" name="email" class="w-full pl-10 py-2 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent" placeholder="your@email.com" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="password" class="block text-gray-700 dark:text-gray-300 font-medium mb-2">Password</label>
+                        <div class="relative">
+                            <i data-feather="lock" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            <input type="password" id="password" name="password" class="w-full pl-10 py-2 border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent" placeholder="••••••••" required>
+                        </div>
+                    </div>
+                    <div>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded transition duration-300 flex items-center justify-center">
+                            <i data-feather="log-in" class="mr-2"></i>
+                            <span>Sign In</span>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-600 dark:text-gray-400">
+                        Don't have an account?
+                        <a href="/signup" class="font-medium text-blue-600 hover:text-blue-500">
+                            Sign up here
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{{template "footer.html" .}}
+
+

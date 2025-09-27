@@ -1,0 +1,123 @@
+<footer class="bg-gray-900 dark:bg-black text-white pt-16 pb-8">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div>
+                <a href="/" class="flex items-center mb-4">
+                    <img src="/static/logo-white.png" alt="Hartlepool Car Services" class="h-12" />
+                </a>
+                <p class="text-gray-400">
+                    Premium automotive services in Hartlepool. Quality repairs,
+                    diagnostics, and maintenance for all vehicle makes and models.
+                </p>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold mb-4">Quick Links</h3>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="/" class="text-gray-400 hover:text-blue-400 transition">Home</a>
+                    </li>
+                    <li>
+                        <a href="/about" class="text-gray-400 hover:text-blue-400 transition">About Us</a>
+                    </li>
+                    <li>
+                        <a href="/services" class="text-gray-400 hover:text-blue-400 transition">Our Services</a>
+                    </li>
+                    <li>
+                        <a href="/contact" class="text-gray-400 hover:text-blue-400 transition">Contact Us</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold mb-4">Services</h3>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="/services#range" class="text-gray-400 hover:text-blue-400 transition">Battery Replacement</a>
+                    </li>
+                    <li>
+                        <a href="/services#range" class="text-gray-400 hover:text-blue-400 transition">Brakes & Suspension</a>
+                    </li>
+                    <li>
+                        <a href="/services#range" class="text-gray-400 hover:text-blue-400 transition">Vehicle Diagnostics</a>
+                    </li>
+                    <li>
+                        <a href="/services#range" class="text-gray-400 hover:text-blue-400 transition">Brakes & Suspension</a>
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold mb-4">Connect With Us</h3>
+                <div class="flex space-x-4 mb-4">
+                    <a href="https://www.facebook.com/profile.php?id=61572406021785" class="text-gray-400 hover:text-blue-400 transition flex">
+                        <i data-feather="facebook"></i>
+                        <span class="ml-2">Facebook</span>
+                    </a>
+                    <!-- <a href="#" class="text-gray-400 hover:text-blue-400 transition"> -->
+                    <!--     <i data-feather="twitter"></i> -->
+                    <!-- </a> -->
+                    <!-- <a href="#" class="text-gray-400 hover:text-blue-400 transition"> -->
+                    <!--     <i data-feather="instagram"></i> -->
+                    <!-- </a> -->
+                </div>
+                <a href="tel:+4407723652106" class="text-gray-400">
+                    <i data-feather="phone" class="inline mr-2"></i> 07723 652106
+                </a>
+                <p class="text-gray-400 pt-4">
+                    <a href="mailto:info@hartlepoolcarservices.com" class="text-gray-400 hover:text-blue-400 transition">
+                        <i data-feather="mail" class="inline mr-2"></i>
+                        info@hartlepoolcarservices.com
+                    </a>
+                </p>
+            </div>
+        </div>
+        <div class="border-t border-gray-800 dark:border-gray-700 pt-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 mb-4 md:mb-0">
+                    © 2025 Hartlepool Car Services. All Rights Reserved.
+                </p>
+                <div class="flex space-x-6">
+                    <a href="/privacy-policy" class="text-gray-400 hover:text-blue-400 transition">Privacy Policy</a>
+                    <a href="/terms-and-conditions" class="text-gray-400 hover:text-blue-400 transition">Terms & Conditions</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+    <!-- This script should be placed at the end of the body -->
+    <script>
+      // The DOMContentLoaded event fires when the initial HTML document has been
+      // completely loaded and parsed, without waiting for stylesheets and images.
+      // Deferred scripts are guaranteed to run before this event.
+      document.addEventListener('DOMContentLoaded', function() {
+
+        // Initialize Feather Icons
+        // This finds all elements with a `data-feather` attribute and replaces them with SVG icons.
+        if (typeof feather !== 'undefined') {
+          feather.replace();
+        }
+
+        // Initialize Animate on Scroll (AOS) library
+        // This starts the library to handle scroll animations.
+        if (typeof AOS !== 'undefined') {
+          AOS.init({
+            duration: 800, // values from 0 to 3000, with step 50ms
+            easing: "ease-in-out",
+            once: true,    // whether animation should happen only once - while scrolling down
+          });
+        }
+
+        // Mobile menu toggle logic
+        const mobileMenuButton = document.getElementById("mobile-menu-button");
+        const mobileMenu = document.getElementById("mobile-menu");
+
+        if (mobileMenuButton && mobileMenu) {
+          mobileMenuButton.addEventListener("click", function () {
+            mobileMenu.classList.toggle("active");
+          });
+        }
+
+      });
+    </script>
+  </body>
+</html>

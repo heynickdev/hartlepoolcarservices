@@ -1,0 +1,70 @@
+-- This file defines the database schema for sqlc to use for code generation.
+-- It should be kept in sync with your migration files.
+
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    is_admin BOOLEAN NOT NULL DEFAULT FALSE,
+    email_verified BOOLEAN NOT NULL DEFAULT FALSE,
+    email_verification_token TEXT,
+    email_verification_expires TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE appointments (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    car_id UUID REFERENCES cars(id) ON DELETE CASCADE,
+    datetime TIMESTAMPTZ NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT,
+    status TEXT NOT NULL DEFAULT 'pending', -- e.g., pending, confirmed, completed, cancelled
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE cars (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+
+    -- Core identification
+    registration_number TEXT NOT NULL UNIQUE,
+
+    -- Basic vehicle info
+    make TEXT,
+    colour TEXT,
+    fuel_type TEXT,
+    engine_capacity INTEGER,
+    year_of_manufacture INTEGER,
+    month_of_first_registration TEXT,
+    month_of_first_dvla_registration TEXT,
+
+    -- Tax and MOT status
+    tax_status TEXT,
+    tax_due_date DATE,
+    mot_status TEXT,
+    mot_expiry_date DATE,
+
+    -- Technical specifications
+    co2_emissions INTEGER,
+    euro_status TEXT,
+    real_driving_emissions TEXT,
+    revenue_weight INTEGER,
+    type_approval TEXT,
+    wheelplan TEXT,
+    automated_vehicle BOOLEAN,
+
+    -- Registration details
+    marked_for_export BOOLEAN,
+    date_of_last_v5c_issued DATE,
+    art_end_date DATE,
+
+    -- Metadata
+    dvla_data_fetched_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+

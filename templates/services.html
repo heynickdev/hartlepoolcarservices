@@ -1,0 +1,255 @@
+{{template "header.html" .}}
+<main>
+    <!-- Hero Section -->
+    <section class="services-hero text-white py-32" style="background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('http://static.photos/automotive/1200x630/3'); background-size: cover; background-position: center;">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-6" data-aos="fade-up">
+                Our Comprehensive Services
+            </h1>
+            <p class="text-xl mb-8 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="100">
+                Expert automotive care for all makes and models
+            </p>
+        </div>
+    </section>
+    <div id="range" class="pb-4"></div>
+
+    <!-- Services List -->
+    <section class="py-16 bg-gray-50 dark:bg-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4" data-aos="fade-up">
+                    Automotive Services
+                </h2>
+                <div class="w-20 h-1 bg-blue-600 mx-auto mb-6" data-aos="fade-up" data-aos-delay="100"></div>
+                <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="200">
+                    We offer a full range of services to keep your vehicle running
+                    smoothly and safely.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" >
+                <!-- Service 1 -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md service-card transition duration-300" data-aos="fade-up">
+                    <div class="text-blue-600 mb-4 service-icon">
+                        <i data-feather="battery" class="w-12 h-12 mx-auto"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Battery Services</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Comprehensive battery testing, replacement, and charging system
+                        diagnostics to ensure your vehicle starts reliably.
+                    </p>
+                    <ul class="text-gray-600 dark:text-gray-400 space-y-2 mb-4">
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-green-500 mr-2 mt-1 w-4 h-4"></i>
+                            <span>Battery testing and diagnostics</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-green-500 mr-2 mt-1 w-4 h-4"></i>
+                            <span>Premium battery replacement</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-green-500 mr-2 mt-1 w-4 h-4"></i>
+                            <span>Alternator and starter testing</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Service 2 -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md service-card transition duration-300" data-aos="fade-up" data-aos-delay="100">
+                    <div class="text-blue-600 mb-4 service-icon">
+                        <i data-feather="disc" class="w-12 h-12 mx-auto"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Brake Services</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Complete brake system inspection, repair, and maintenance to
+                        ensure your safety on the road.
+                    </p>
+                    <ul class="text-gray-600 dark:text-gray-400 space-y-2 mb-4">
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-green-500 mr-2 mt-1 w-4 h-4"></i>
+                            <span>Brake pad and rotor replacement</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-green-500 mr-2 mt-1 w-4 h-4"></i>
+                            <span>Brake fluid flush and replacement</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-green-500 mr-2 mt-1 w-4 h-4"></i>
+                            <span>ABS system diagnostics</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Service 3 -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md service-card transition duration-300" data-aos="fade-up" data-aos-delay="200">
+                    <div class="text-blue-600 mb-4 service-icon">
+                        <i data-feather="activity" class="w-12 h-12 mx-auto"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Engine Diagnostics</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Advanced diagnostic services to identify and resolve engine
+                        performance issues quickly and accurately.
+                    </p>
+                    <ul class="text-gray-600 dark:text-gray-400 space-y-2 mb-4">
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-green-500 mr-2 mt-1 w-4 h-4"></i>
+                            <span>Check engine light diagnostics</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-green-500 mr-2 mt-1 w-4 h-4"></i>
+                            <span>Emissions testing</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-green-500 mr-2 mt-1 w-4 h-4"></i>
+                            <span>Performance tuning</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Service 4 -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md service-card transition duration-300" data-aos="fade-up">
+                    <div class="text-blue-600 mb-4 service-icon">
+                        <i data-feather="droplet" class="w-12 h-12 mx-auto"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Oil & Fluid Services</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Essential fluid maintenance to protect your engine and extend the
+                        life of your vehicle.
+                    </p>
+                    <ul class="text-gray-600 dark:text-gray-400 space-y-2 mb-4">
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-green-500 mr-2 mt-1 w-4 h-4"></i>
+                            <span>Oil and filter change</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-green-500 mr-2 mt-1 w-4 h-4"></i>
+                            <span>Transmission fluid service</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-green-500 mr-2 mt-1 w-4 h-4"></i>
+                            <span>Coolant system flush</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Service 5 -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md service-card transition duration-300" data-aos="fade-up" data-aos-delay="100">
+                    <div class="text-blue-600 mb-4 service-icon">
+                        <i data-feather="map" class="w-12 h-12 mx-auto"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Exhaust Services</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Complete exhaust system inspection and repair for a smoother,
+                        safer ride.
+                    </p>
+                    <ul class="text-gray-600 dark:text-gray-400 space-y-2 mb-4">
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-green-500 mr-2 mt-1 w-4 h-4"></i>
+                            <span>Exhaust system inspection</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-green-500 mr-2 mt-1 w-4 h-4"></i>
+                            <span>Exhaust system repair</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-green-500 mr-2 mt-1 w-4 h-4"></i>
+                            <span>Fuel filter replacement</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Service 6 -->
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md service-card transition duration-300" data-aos="fade-up" data-aos-delay="200">
+                    <div class="text-blue-600 mb-4 service-icon">
+                        <i data-feather="settings" class="w-12 h-12 mx-auto"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Suspension Services</h3>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">
+                        Complete suspension system inspection and repair for a smoother,
+                        safer ride.
+                    </p>
+                    <ul class="text-gray-600 dark:text-gray-400 space-y-2 mb-4">
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-green-500 mr-2 mt-1 w-4 h-4"></i>
+                            <span>Shock and strut replacement</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-green-500 mr-2 mt-1 w-4 h-4"></i>
+                            <span>Wheel alignment</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i data-feather="check" class="text-green-500 mr-2 mt-1 w-4 h-4"></i>
+                            <span>Ball joint and bushing replacement</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Packages -->
+    <section class="py-16 bg-white dark:bg-black">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold mb-4" data-aos="fade-up">
+                    Service Packages
+                </h2>
+                <div class="w-20 h-1 bg-blue-600 mx-auto mb-6" data-aos="fade-up" data-aos-delay="100"></div>
+                <p class="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto" data-aos="fade-up" data-aos-delay="200">
+                    We offer comprehensive service packages to keep your vehicle in top
+                    condition.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-6 text-center" data-aos="fade-up">
+                    <h3 class="text-xl font-bold mb-4">Basic Service</h3>
+                    <p class="text-4xl font-bold mb-6 text-blue-600">£99</p>
+                    <ul class="text-gray-600 dark:text-gray-400 space-y-3 mb-8">
+                        <li>Oil and filter change</li>
+                        <li>Fluid level checks</li>
+                        <li>Tire pressure check</li>
+                        <li>Basic visual inspection</li>
+                    </ul>
+                    <a href="/contact" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition duration-300 inline-block">
+                        Book Now
+                    </a>
+                </div>
+                <div class="border-2 border-blue-600 rounded-lg p-6 text-center transform scale-105" data-aos="fade-up" data-aos-delay="100">
+                    <div class="bg-blue-600 text-white py-1 px-4 rounded-full inline-block mb-4 -mt-8">
+                        Most Popular
+                    </div>
+                    <h3 class="text-xl font-bold mb-4">Premium Service</h3>
+                    <p class="text-4xl font-bold mb-6 text-blue-600">£199</p>
+                    <ul class="text-gray-600 dark:text-gray-400 space-y-3 mb-8">
+                        <li>Everything in Basic Service</li>
+                        <li>Air filter replacement</li>
+                        <li>Brake inspection</li>
+                        <li>Battery test</li>
+                        <li>Diagnostic scan</li>
+                    </ul>
+                    <a href="/contact" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition duration-300 inline-block">
+                        Book Now
+                    </a>
+                </div>
+                <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-6 text-center" data-aos="fade-up" data-aos-delay="200">
+                    <h3 class="text-xl font-bold mb-4">Full Service</h3>
+                    <p class="text-4xl font-bold mb-6 text-blue-600">£299</p>
+                    <ul class="text-gray-600 dark:text-gray-400 space-y-3 mb-8">
+                        <li>Everything in Premium Service</li>
+                        <li>Cabin air filter replacement</li>
+                        <li>Fuel system cleaning</li>
+                        <li>Full suspension check</li>
+                        <li>Detailed vehicle report</li>
+                    </ul>
+                    <a href="/contact" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded transition duration-300 inline-block">
+                        Book Now
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+{{template "footer.html" .}}
+
+

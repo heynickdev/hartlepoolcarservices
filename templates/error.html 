@@ -1,0 +1,16 @@
+{{template "header.html" .}}
+<main>
+    <div class="bg-gray-100 dark:bg-gray-900 flex items-center justify-center h-screen">
+        <div class="text-center">
+            <h1 class="text-6xl font-bold text-blue-600">{{.ErrorTitle}}</h1>
+            <p class="text-2xl mt-4 text-gray-800 dark:text-gray-200">Oops! Something went wrong.</p>
+            <p class="text-gray-600 dark:text-gray-400 mt-2">{{.ErrorMessage}}</p>
+            <a href="/" class="mt-6 inline-block bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition duration-300">
+                Go Back Home
+            </a>
+        </div>
+    </div>
+</main>
+{{template "footer.html" .}}
+
+

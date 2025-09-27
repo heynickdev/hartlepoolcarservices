@@ -1,0 +1,59 @@
+{{ define "navigation" }}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="flex justify-between h-16">
+    <div class="flex items-center lg:absolute lg:left-16 lg:top-4 lg:w-96">
+      <img
+        src="/static/logo.png"
+        alt="Logo"
+        class="h-8 w-auto inline dark:hidden"
+      />
+      <img
+        src="/static/logo-white.png"
+        alt="Logo"
+        class="h-8 w-auto hidden dark:inline"
+      />
+      <span class="ml-3 text-xl font-semibold text-gray-900 dark:text-white"
+        >Hartlepool Car Services</span
+      >
+    </div>
+
+    <div class="flex items-center space-x-4">
+      <!-- Mobile Menu Button -->
+      <button
+        id="mobile-burger"
+        class="lg:hidden p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+      >
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+
+      <!-- Admin Menu -->
+      <div class="lg:absolute right-4 top-4 flex gap-4">
+        <div
+          class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 w-max"
+        >
+          <i class="fas fa-user text-xl"></i>
+          <span class="hidden sm:inline w-max capitalize">{{.User.Name}}</span>
+        </div>
+        <div
+          class="flex items-center space-x-2 text-blue-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white w-full"
+        >
+          <a href="/">
+            <i class="fas fa-home text-xl"></i>
+            <span class="hidden sm:inline">Home</span>
+          </a>
+        </div>
+
+        <div>
+          <a
+            href="/logout"
+            class="flex items-center space-x-2 text-red-900 dark:text-red-400 hover:text-red-600 dark:hover:text-red-200 px-4 py-3 rounded-lg text-base font-medium w-full"
+          >
+            <i class="fas fa-sign-out-alt text-xl"></i>
+            <span>Logout</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}

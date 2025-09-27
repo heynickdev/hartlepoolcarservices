@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}} | Hartlepool Car Services</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'media',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+        <!-- Navigation -->
+        <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+            {{ template "navigation" . }}
+        </nav>
+
+    <div class="lg:flex h-screen">
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu-overlay" class="hidden fixed inset-0 bg-gray-600 bg-opacity-75 z-50 lg:hidden">
+            <div class="fixed inset-y-0 left-0 flex flex-col w-full max-w-xs bg-white dark:bg-gray-800">
+                <!-- Close button -->
+                <div class="absolute top-0 right-0 -mr-12 pt-2">
+                    <button id="mobile-menu-close" class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                        <i class="fas fa-times text-white text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Menu header -->
+                <div class="flex items-center flex-shrink-0 px-4 py-4 border-b border-gray-200 dark:border-gray-700">
+                    <img src="/static/logo.png" alt="Logo" class="h-8 w-auto dark:hidden inline">
+                        <img src="/static/logo-white.png" alt="Logo" class="h-8 w-auto hidden dark:inline">
+                    <span class="ml-3 text-lg font-semibold text-gray-900 dark:text-white">Profile Settings</span>
+                </div>
+
+                <!-- Menu items -->
+                <nav class="mt-5 flex-1 px-4 space-y-1">
+                    <a href="/dashboard" class="flex items-center space-x-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-3 rounded-lg text-base font-medium">
+                        <i class="fas fa-car-garage text-xl"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="/add-car" class="flex items-center space-x-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-3 rounded-lg text-base font-medium">
+                        <i class="fas fa-plus-circle text-xl"></i>
+                        <span>Add Vehicle</span>
+                    </a>
+                    <a href="/profile" class="flex items-center space-x-3 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/50 px-4 py-3 rounded-lg text-base font-medium">
+                        <i class="fas fa-user-cog text-xl"></i>
+                        <span>Profile Settings</span>
+                    </a>
+                </nav>
+
+                <!-- Bottom section -->
+                <div class="flex-shrink-0 px-4 py-4 border-t border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-user-circle text-xl"></i>
+                        <span class="text-base font-medium">{{.User.Name}}</span>
+                    </div>
+                    <a href="/logout" class="flex items-center space-x-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/50 px-4 py-3 rounded-lg text-base font-medium w-full">
+                        <i class="fas fa-sign-out-alt text-xl"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Desktop Sidebar -->
+        <div class="hidden lg:block w-64 bg-white dark:bg-gray-800 pt-4 shadow-sm border-r border-gray-200 dark:border-gray-700">
+            <div class="p-4">
+                <nav class="space-y-2">
+                    <a href="/dashboard" class="flex items-center space-x-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-2 rounded-lg">
+                        <i class="fas fa-grip"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="/add-car" class="flex items-center space-x-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-2 rounded-lg">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Add Vehicle</span>
+                    </a>
+                    <a href="/profile" class="flex items-center space-x-3 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/50 px-4 py-2 rounded-lg">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Profile Settings</span>
+                    </a>
+                </nav>
+                                    <!-- Bottom section -->
+                <div class="flex-shrink-0 w-64 absolute left-0 bottom-0 py-4 border-t border-gray-200 dark:border-gray-700">
+                    <div class="flex items-center space-x-3 px-4 py-3 text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-user-circle text-xl"></i>
+                        <span class="text-base font-medium">{{.User.Name}}</span>
+                    </div>
+                    <a href="/logout" class="flex items-center space-x-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/50 px-4 py-3 rounded-lg text-base font-medium w-full">
+                        <i class="fas fa-sign-out-alt text-xl"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <div class="p-4 sm:p-6">
+                <!-- Page Header -->
+                <div class="mb-6">
+                    <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Profile Settings</h1>
+                    <p class="text-gray-600 dark:text-gray-400">Manage your account details and security settings</p>
+                </div>
+
+                <!-- Success/Error Messages -->
+                {{if .Success}}
+                <div class="mb-4 p-4 bg-green-50 dark:bg-green-900/50 border border-green-200 dark:border-green-800 rounded-lg">
+                    <div class="flex">
+                        <i class="fas fa-check-circle text-green-400 mr-3 mt-0.5"></i>
+                        <p class="text-green-800 dark:text-green-200">{{.Success}}</p>
+                    </div>
+                </div>
+                {{end}}
+
+                {{if .Error}}
+                <div class="mb-4 p-4 bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 rounded-lg">
+                    <div class="flex">
+                        <i class="fas fa-exclamation-circle text-red-400 mr-3 mt-0.5"></i>
+                        <p class="text-red-800 dark:text-red-200">{{.Error}}</p>
+                    </div>
+                </div>
+                {{end}}
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Update Email -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Update Email</h2>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Change your email address</p>
+                        </div>
+                        <form method="POST" action="/update-email" class="p-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="current_email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Current Email</label>
+                                    <input type="email" id="current_email" value="{{.User.Email}}" readonly class="mt-1 block w-full px-3 py-2 bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-gray-100" />
+                                </div>
+                                <div>
+                                    <label for="new_email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">New Email</label>
+                                    <input type="email" id="new_email" name="new_email" required class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100" />
+                                </div>
+                                <div>
+                                    <label for="current_password_email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Current Password</label>
+                                    <input type="password" id="current_password_email" name="current_password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100" />
+                                </div>
+                                <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+                                    Update Email
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Update Password -->
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                        <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                            <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Update Password</h2>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">Change your account password</p>
+                        </div>
+                        <form method="POST" action="/update-password" class="p-6">
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="current_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Current Password</label>
+                                    <input type="password" id="current_password" name="current_password" required class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100" />
+                                </div>
+                                <div>
+                                    <label for="new_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">New Password</label>
+                                    <input type="password" id="new_password" name="new_password" required minlength="8" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100" />
+                                </div>
+                                <div>
+                                    <label for="confirm_password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Confirm New Password</label>
+                                    <input type="password" id="confirm_password" name="confirm_password" required minlength="8" class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100" />
+                                </div>
+                                <button type="submit" class="w-full bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded-md transition-colors">
+                                    Update Password
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Account Information -->
+                <div class="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+                    <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                        <h2 class="text-lg font-semibold text-gray-900 dark:text-white">Account Information</h2>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Your account details</p>
+                    </div>
+                    <div class="p-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+                                <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{.User.Name}}</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                                <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{.User.Email}}</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Phone</label>
+                                <p class="mt-1 text-sm text-gray-900 dark:text-gray-100">{{if .User.Phone}}{{.User.Phone}}{{else}}Not provided{{end}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mobile burger menu functionality
+        const mobileBurger = document.getElementById('mobile-burger');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const mobileMenuClose = document.getElementById('mobile-menu-close');
+
+        // Open menu
+        mobileBurger.addEventListener('click', () => {
+            mobileMenuOverlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        });
+
+        // Close menu
+        const closeMobileMenu = () => {
+            mobileMenuOverlay.classList.add('hidden');
+            document.body.style.overflow = ''; // Restore scrolling
+        };
+
+        mobileMenuClose.addEventListener('click', closeMobileMenu);
+
+        // Close menu when clicking overlay
+        mobileMenuOverlay.addEventListener('click', (e) => {
+            if (e.target === mobileMenuOverlay) {
+                closeMobileMenu();
+            }
+        });
+
+        // Close menu on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !mobileMenuOverlay.classList.contains('hidden')) {
+                closeMobileMenu();
+            }
+        });
+
+        // Password confirmation validation
+        const newPassword = document.getElementById('new_password');
+        const confirmPassword = document.getElementById('confirm_password');
+        const updatePasswordForm = document.querySelector('form[action="/update-password"]');
+
+        updatePasswordForm.addEventListener('submit', (e) => {
+            if (newPassword.value !== confirmPassword.value) {
+                e.preventDefault();
+                alert('New password and confirmation password do not match.');
+                return false;
+            }
+        });
+
+        confirmPassword.addEventListener('input', () => {
+            if (newPassword.value !== confirmPassword.value) {
+                confirmPassword.setCustomValidity('Passwords do not match');
+            } else {
+                confirmPassword.setCustomValidity('');
+            }
+        });
+    </script>
+</body>
+</html>
