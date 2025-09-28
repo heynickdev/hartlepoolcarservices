@@ -41,6 +41,12 @@ func main() {
 		http.ServeFile(w, r, "./static/robots.txt")
 	})
 
+	// Serve sitemap.xml from static directory
+	http.HandleFunc("/sitemap.xml", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/xml")
+		http.ServeFile(w, r, "./static/sitemap.xml")
+	})
+
 	// Public routes
 	http.HandleFunc("/", handlers.HomePage)
 	http.HandleFunc("/about", handlers.AboutPage)
