@@ -35,5 +35,3 @@ func RunMigrations() error {
 	log.Println("Database migrations applied successfully.")
 	return nil
 }
-
-

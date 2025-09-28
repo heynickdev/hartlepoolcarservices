@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bufio"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"hcs-full/database"
 	"hcs-full/handlers"
@@ -31,6 +34,9 @@ func main() {
 
 	handlers.WsHub = handlers.NewHub()
 	go handlers.WsHub.Run()
+
+	// Start command-line interface
+	go startCommandInterface()
 
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
@@ -63,6 +69,7 @@ func main() {
 	http.HandleFunc("/verify-email-reminder", handlers.VerifyEmailReminderHandler)
 	http.HandleFunc("/verify-email-change", handlers.VerifyEmailChangeHandler)
 	http.HandleFunc("/forgot-password", handlers.ForgotPasswordHandler)
+	http.HandleFunc("/resend-reset", handlers.ResendResetHandler)
 	http.HandleFunc("/reset-password", handlers.ResetPasswordHandler)
 
 	// Authenticated routes
@@ -113,4 +120,35 @@ func main() {
 	}
 }
 
+// startCommandInterface starts a command-line interface for user management
+func startCommandInterface() {
+	scanner := bufio.NewScanner(os.Stdin)
 
+	fmt.Println("\n=== HCS User Management CLI ===")
+	fmt.Println("Server is running. Type 'help' for available commands.")
+	fmt.Print("hcs> ")
+
+	for scanner.Scan() {
+		input := strings.TrimSpace(scanner.Text())
+		if input == "" {
+			fmt.Print("hcs> ")
+			continue
+		}
+
+		if input == "exit" || input == "quit" {
+			fmt.Println("Goodbye!")
+			os.Exit(0)
+		}
+
+		err := database.ProcessCommand(input)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+		}
+
+		fmt.Print("hcs> ")
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Printf("Error reading from stdin: %v", err)
+	}
+}

@@ -178,6 +178,9 @@ UPDATE users SET email_verified = TRUE, email_verification_token = NULL, email_v
 -- name: SetPasswordResetToken :exec
 UPDATE users SET password_reset_token = $2, password_reset_expires = $3 WHERE email = $1;
 
+-- name: GetActivePasswordResetToken :one
+SELECT password_reset_token, password_reset_expires FROM users WHERE email = $1 AND password_reset_token IS NOT NULL AND password_reset_expires > NOW();
+
 -- name: GetUserByPasswordResetToken :one
 SELECT * FROM users WHERE password_reset_token = $1 AND password_reset_expires > NOW();
 
@@ -192,5 +195,38 @@ SELECT * FROM users WHERE email_change_token = $1 AND email_change_expires > NOW
 
 -- name: ConfirmEmailChange :exec
 UPDATE users SET email = pending_email, pending_email = NULL, email_change_token = NULL, email_change_expires = NULL, email_verified = TRUE WHERE id = $1;
+
+-- name: BlacklistToken :exec
+INSERT INTO token_blacklist (token_hash, user_id, reason, expires_at) VALUES ($1, $2, $3, $4);
+
+-- name: IsTokenBlacklisted :one
+SELECT EXISTS(SELECT 1 FROM token_blacklist WHERE token_hash = $1 AND expires_at > NOW());
+
+-- name: BlacklistAllUserTokens :exec
+INSERT INTO token_blacklist (token_hash, user_id, reason, expires_at)
+SELECT
+    'user_' || $1::text || '_' || extract(epoch from NOW())::text, -- Generate a placeholder hash for user-wide blacklist
+    $1,
+    $2,
+    $3
+WHERE NOT EXISTS (
+    SELECT 1 FROM token_blacklist
+    WHERE user_id = $1 AND reason = $2 AND blacklisted_at > NOW() - INTERVAL '1 minute'
+);
+
+-- name: CleanupExpiredTokens :exec
+DELETE FROM token_blacklist WHERE expires_at <= NOW();
+
+-- name: MakeUserAdmin :exec
+UPDATE users SET is_admin = TRUE WHERE email = $1;
+
+-- name: RemoveUserAdmin :exec
+UPDATE users SET is_admin = FALSE WHERE email = $1;
+
+-- name: ActivateUserByEmail :exec
+UPDATE users SET email_verified = TRUE WHERE email = $1;
+
+-- name: DeleteUserByEmail :exec
+DELETE FROM users WHERE email = $1;
 
 

@@ -13,11 +13,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 	"golang.org/x/crypto/bcrypt"
 )
-
 
 func SignupHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
@@ -56,13 +55,13 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 		expiresAt := time.Now().Add(24 * time.Hour)
 
 		params := db.CreateUserParams{
-			Name:                        name,
-			Email:                       email,
-			PasswordHash:                hashedPassword,
-			Phone:                       phone,
-			IsAdmin:                     false,
-			EmailVerificationToken:      pgtype.Text{String: verificationToken, Valid: true},
-			EmailVerificationExpires:    pgtype.Timestamptz{Time: expiresAt, Valid: true},
+			Name:                     name,
+			Email:                    email,
+			PasswordHash:             hashedPassword,
+			Phone:                    phone,
+			IsAdmin:                  false,
+			EmailVerificationToken:   pgtype.Text{String: verificationToken, Valid: true},
+			EmailVerificationExpires: pgtype.Timestamptz{Time: expiresAt, Valid: true},
 		}
 
 		user, err := database.Queries.CreateUser(context.Background(), params)
@@ -364,6 +363,13 @@ func UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Check if new password is the same as current password
+	err = bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(newPassword))
+	if err == nil {
+		http.Redirect(w, r, "/profile?error=New+password+cannot+be+the+same+as+your+current+password", http.StatusSeeOther)
+		return
+	}
+
 	// Hash new password
 	hashedPassword, err := utils.HashPassword(newPassword)
 	if err != nil {
@@ -452,24 +458,35 @@ func ForgotPasswordHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// Generate reset token
-		resetToken := uuid.New().String()
-		resetExpires := time.Now().Add(1 * time.Hour) // Token expires in 1 hour
+		// Check if there's already an active reset token
+		activeToken, err := database.Queries.GetActivePasswordResetToken(context.Background(), email)
+		var resetToken string
+		var resetExpires time.Time
 
-		// Store reset token in database
-		err = database.Queries.SetPasswordResetToken(context.Background(), db.SetPasswordResetTokenParams{
-			Email:                email,
-			PasswordResetToken:   pgtype.Text{String: resetToken, Valid: true},
-			PasswordResetExpires: pgtype.Timestamptz{Time: resetExpires, Valid: true},
-		})
-		if err != nil {
-			log.Printf("Error setting password reset token: %v", err)
-			data := models.PageData{
-				Title: "Forgot Password",
-				Error: "Error processing request. Please try again.",
+		if err == nil {
+			// Active token exists, reuse it
+			resetToken = activeToken.PasswordResetToken.String
+			resetExpires = activeToken.PasswordResetExpires.Time
+		} else {
+			// No active token, generate a new one
+			resetToken = uuid.New().String()
+			resetExpires = time.Now().Add(1 * time.Hour) // Token expires in 1 hour
+
+			// Store reset token in database
+			err = database.Queries.SetPasswordResetToken(context.Background(), db.SetPasswordResetTokenParams{
+				Email:                email,
+				PasswordResetToken:   pgtype.Text{String: resetToken, Valid: true},
+				PasswordResetExpires: pgtype.Timestamptz{Time: resetExpires, Valid: true},
+			})
+			if err != nil {
+				log.Printf("Error setting password reset token: %v", err)
+				data := models.PageData{
+					Title: "Forgot Password",
+					Error: "Error processing request. Please try again.",
+				}
+				RenderTemplate(w, r, "forgot_password.html", data)
+				return
 			}
-			RenderTemplate(w, r, "forgot_password.html", data)
-			return
 		}
 
 		// Send reset email
@@ -589,11 +606,11 @@ func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		if len(password) < 6 {
+		if len(password) < 8 {
 			data := models.PageData{
 				Title: "Reset Password",
 				Token: token,
-				Error: "Password must be at least 6 characters long",
+				Error: "Password must be at least 8 characters long",
 			}
 			RenderTemplate(w, r, "reset_password.html", data)
 			return
@@ -646,6 +663,115 @@ func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func ResendResetHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		data := models.PageData{
+			Title: "Resend Reset Link",
+		}
+		RenderTemplate(w, r, "resend_reset.html", data)
+		return
+	}
+
+	if r.Method == http.MethodPost {
+		email := r.FormValue("email")
+		if email == "" {
+			data := models.PageData{
+				Title: "Resend Reset Link",
+				Error: "Email is required",
+			}
+			RenderTemplate(w, r, "resend_reset.html", data)
+			return
+		}
+
+		// Check if user exists and has an active reset token
+		user, err := database.Queries.GetUserByEmail(context.Background(), email)
+		if err != nil {
+			// Don't reveal if email exists or not for security
+			data := models.PageData{
+				Title:   "Resend Reset Link",
+				Success: "If an account with that email has an active reset request, we've resent the link.",
+			}
+			RenderTemplate(w, r, "resend_reset.html", data)
+			return
+		}
+
+		// Check if there's an active reset token
+		activeToken, err := database.Queries.GetActivePasswordResetToken(context.Background(), email)
+		if err != nil {
+			// No active token
+			data := models.PageData{
+				Title: "Resend Reset Link",
+				Error: "No active password reset request found. Please request a new password reset.",
+			}
+			RenderTemplate(w, r, "resend_reset.html", data)
+			return
+		}
+
+		// Send reset email with existing token
+		baseURL := os.Getenv("BASE_URL")
+		if baseURL == "" {
+			baseURL = "http://localhost:8080"
+		}
+
+		// Ensure HTTPS for production domain
+		if baseURL == "hartlepoolcarservices.com" {
+			baseURL = "https://hartlepoolcarservices.com"
+		}
+
+		resetURL := fmt.Sprintf("%s/reset-password?token=%s", baseURL, activeToken.PasswordResetToken.String)
+		subject := "Password Reset - Hartlepool Car Services (Resent)"
+		body := fmt.Sprintf(`
+		<html>
+		<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+			<div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+				<h2 style="color: #2c3e50;">Password Reset Request (Resent)</h2>
+				<p>Hello %s,</p>
+				<p>You requested to resend your password reset link for your Hartlepool Car Services account. To reset your password, please click the button below:</p>
+
+				<div style="text-align: center; margin: 30px 0;">
+					<a href="%s" style="background-color: #3498db; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Reset Password</a>
+				</div>
+
+				<p>If the button doesn't work, you can also copy and paste this link into your browser:</p>
+				<p style="word-break: break-all; color: #7f8c8d;">%s</p>
+
+				<p style="margin-top: 30px;">This password reset link will expire at %s.</p>
+
+				<hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+				<p style="font-size: 12px; color: #7f8c8d;">
+					If you didn't request this password reset, please ignore this email and your password will remain unchanged.
+				</p>
+				<p style="font-size: 12px; color: #7f8c8d;">
+					Hartlepool Car Services<br>
+					Email: info@hartlepoolcarservices.com
+				</p>
+			</div>
+		</body>
+		</html>
+		`, user.Name, resetURL, resetURL, activeToken.PasswordResetExpires.Time.Format("January 2, 2006 at 3:04 PM"))
+
+		emailService := utils.NewEmailService()
+		err = emailService.SendEmail(user.Email, subject, body)
+		if err != nil {
+			log.Printf("Error sending password reset email: %v", err)
+			data := models.PageData{
+				Title: "Resend Reset Link",
+				Error: "Error sending email. Please try again.",
+			}
+			RenderTemplate(w, r, "resend_reset.html", data)
+			return
+		}
+
+		// Show success message
+		data := models.PageData{
+			Title:   "Resend Reset Link",
+			Success: "Password reset link has been resent! Check your email for instructions.",
+		}
+		RenderTemplate(w, r, "resend_reset.html", data)
+		return
+	}
+}
+
 func VerifyEmailChangeHandler(w http.ResponseWriter, r *http.Request) {
 	token := r.URL.Query().Get("token")
 	if token == "" {
@@ -670,5 +796,3 @@ func VerifyEmailChangeHandler(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/profile?success=Email+address+updated+successfully", http.StatusSeeOther)
 }
-
-

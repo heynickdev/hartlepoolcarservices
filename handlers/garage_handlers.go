@@ -107,18 +107,18 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 	chartData := generateCarStatsChartData(cars)
 
 	data := models.PageData{
-		Title:           "My Garage",
-		IsAuthenticated: true,
-		User:            &user,
-		UserCars:        cars,
-		TotalCars:       totalCars,
-		PendingAppointments:   taxDueSoon,  // Repurpose for tax due
-		CancelledAppointments: motDueSoon,  // Repurpose for MOT due
-		ChartData:       chartData,
-		UserAppointments:     userAppointments,
-		CarNextAppointments:  carNextAppointments,
-		Success:         r.URL.Query().Get("success"),
-		Error:           r.URL.Query().Get("error"),
+		Title:                 "My Garage",
+		IsAuthenticated:       true,
+		User:                  &user,
+		UserCars:              cars,
+		TotalCars:             totalCars,
+		PendingAppointments:   taxDueSoon, // Repurpose for tax due
+		CancelledAppointments: motDueSoon, // Repurpose for MOT due
+		ChartData:             chartData,
+		UserAppointments:      userAppointments,
+		CarNextAppointments:   carNextAppointments,
+		Success:               r.URL.Query().Get("success"),
+		Error:                 r.URL.Query().Get("error"),
 	}
 
 	RenderTemplate(w, r, "garage.html", data)

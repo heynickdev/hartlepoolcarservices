@@ -21,28 +21,28 @@ type DVLARequest struct {
 }
 
 type DVLAResponse struct {
-	RegistrationNumber             string    `json:"registrationNumber"`
-	TaxStatus                      string    `json:"taxStatus"`
-	TaxDueDate                     string    `json:"taxDueDate"`
-	ArtEndDate                     string    `json:"artEndDate"`
-	MOTStatus                      string    `json:"motStatus"`
-	MOTExpiryDate                  string    `json:"motExpiryDate"`
-	Make                           string    `json:"make"`
-	MonthOfFirstRegistration       string    `json:"monthOfFirstRegistration"`
-	MonthOfFirstDVLARegistration   string    `json:"monthOfFirstDvlaRegistration"`
-	YearOfManufacture              int       `json:"yearOfManufacture"`
-	EngineCapacity                 int       `json:"engineCapacity"`
-	CO2Emissions                   int       `json:"co2Emissions"`
-	FuelType                       string    `json:"fuelType"`
-	MarkedForExport                bool      `json:"markedForExport"`
-	Colour                         string    `json:"colour"`
-	TypeApproval                   string    `json:"typeApproval"`
-	RevenueWeight                  int       `json:"revenueWeight"`
-	DateOfLastV5CIssued            string    `json:"dateOfLastV5CIssued"`
-	Wheelplan                      string    `json:"wheelplan"`
-	EuroStatus                     string    `json:"euroStatus"`
-	RealDrivingEmissions           string    `json:"realDrivingEmissions"`
-	AutomatedVehicle               bool      `json:"automatedVehicle"`
+	RegistrationNumber           string `json:"registrationNumber"`
+	TaxStatus                    string `json:"taxStatus"`
+	TaxDueDate                   string `json:"taxDueDate"`
+	ArtEndDate                   string `json:"artEndDate"`
+	MOTStatus                    string `json:"motStatus"`
+	MOTExpiryDate                string `json:"motExpiryDate"`
+	Make                         string `json:"make"`
+	MonthOfFirstRegistration     string `json:"monthOfFirstRegistration"`
+	MonthOfFirstDVLARegistration string `json:"monthOfFirstDvlaRegistration"`
+	YearOfManufacture            int    `json:"yearOfManufacture"`
+	EngineCapacity               int    `json:"engineCapacity"`
+	CO2Emissions                 int    `json:"co2Emissions"`
+	FuelType                     string `json:"fuelType"`
+	MarkedForExport              bool   `json:"markedForExport"`
+	Colour                       string `json:"colour"`
+	TypeApproval                 string `json:"typeApproval"`
+	RevenueWeight                int    `json:"revenueWeight"`
+	DateOfLastV5CIssued          string `json:"dateOfLastV5CIssued"`
+	Wheelplan                    string `json:"wheelplan"`
+	EuroStatus                   string `json:"euroStatus"`
+	RealDrivingEmissions         string `json:"realDrivingEmissions"`
+	AutomatedVehicle             bool   `json:"automatedVehicle"`
 }
 
 type DVLAClient struct {
@@ -118,10 +118,10 @@ func ParseDate(dateStr string) (*time.Time, error) {
 
 	// Try different date formats that DVLA might use
 	formats := []string{
-		"2006-01-02",     // YYYY-MM-DD
-		"2006-01",        // YYYY-MM
-		"02-01-2006",     // DD-MM-YYYY
-		"01-2006",        // MM-YYYY
+		"2006-01-02", // YYYY-MM-DD
+		"2006-01",    // YYYY-MM
+		"02-01-2006", // DD-MM-YYYY
+		"01-2006",    // MM-YYYY
 	}
 
 	for _, format := range formats {

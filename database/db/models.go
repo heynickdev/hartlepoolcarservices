@@ -49,6 +49,15 @@ type Car struct {
 	UpdatedAt                    pgtype.Timestamptz `json:"updated_at"`
 }
 
+type TokenBlacklist struct {
+	ID            pgtype.UUID        `json:"id"`
+	TokenHash     string             `json:"token_hash"`
+	UserID        pgtype.UUID        `json:"user_id"`
+	Reason        string             `json:"reason"`
+	BlacklistedAt pgtype.Timestamptz `json:"blacklisted_at"`
+	ExpiresAt     pgtype.Timestamptz `json:"expires_at"`
+}
+
 type User struct {
 	ID                       pgtype.UUID        `json:"id"`
 	Name                     string             `json:"name"`

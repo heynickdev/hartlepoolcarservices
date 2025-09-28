@@ -9,5 +9,3 @@ func SanitizeInput(input string) string {
 	p := bluemonday.UGCPolicy()
 	return p.Sanitize(input)
 }
-
-

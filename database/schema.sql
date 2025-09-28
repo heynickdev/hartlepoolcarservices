@@ -72,4 +72,18 @@ CREATE TABLE cars (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Token blacklist table for JWT session management
+CREATE TABLE token_blacklist (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    token_hash VARCHAR(255) UNIQUE NOT NULL,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    reason VARCHAR(100) NOT NULL,
+    blacklisted_at TIMESTAMPTZ DEFAULT NOW(),
+    expires_at TIMESTAMPTZ NOT NULL
+);
 
+CREATE INDEX idx_appointments_user_id ON appointments(user_id);
+CREATE INDEX idx_appointments_car_id ON appointments(car_id);
+CREATE INDEX idx_appointments_date ON appointments(datetime);
+CREATE INDEX idx_token_blacklist_hash ON token_blacklist(token_hash);
+CREATE INDEX idx_token_blacklist_expires ON token_blacklist(expires_at);

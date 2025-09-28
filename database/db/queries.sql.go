@@ -11,6 +11,15 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const activateUserByEmail = `-- name: ActivateUserByEmail :exec
+UPDATE users SET email_verified = TRUE WHERE email = $1
+`
+
+func (q *Queries) ActivateUserByEmail(ctx context.Context, email string) error {
+	_, err := q.db.Exec(ctx, activateUserByEmail, email)
+	return err
+}
+
 const adminDeleteAppointment = `-- name: AdminDeleteAppointment :exec
 DELETE FROM appointments WHERE id = $1
 `
@@ -26,6 +35,60 @@ DELETE FROM cars WHERE id = $1
 
 func (q *Queries) AdminDeleteCar(ctx context.Context, id pgtype.UUID) error {
 	_, err := q.db.Exec(ctx, adminDeleteCar, id)
+	return err
+}
+
+const blacklistAllUserTokens = `-- name: BlacklistAllUserTokens :exec
+INSERT INTO token_blacklist (token_hash, user_id, reason, expires_at)
+SELECT
+    'user_' || $1::text || '_' || extract(epoch from NOW())::text, -- Generate a placeholder hash for user-wide blacklist
+    $1,
+    $2,
+    $3
+WHERE NOT EXISTS (
+    SELECT 1 FROM token_blacklist
+    WHERE user_id = $1 AND reason = $2 AND blacklisted_at > NOW() - INTERVAL '1 minute'
+)
+`
+
+type BlacklistAllUserTokensParams struct {
+	UserID    pgtype.UUID        `json:"user_id"`
+	Reason    string             `json:"reason"`
+	ExpiresAt pgtype.Timestamptz `json:"expires_at"`
+}
+
+func (q *Queries) BlacklistAllUserTokens(ctx context.Context, arg BlacklistAllUserTokensParams) error {
+	_, err := q.db.Exec(ctx, blacklistAllUserTokens, arg.UserID, arg.Reason, arg.ExpiresAt)
+	return err
+}
+
+const blacklistToken = `-- name: BlacklistToken :exec
+INSERT INTO token_blacklist (token_hash, user_id, reason, expires_at) VALUES ($1, $2, $3, $4)
+`
+
+type BlacklistTokenParams struct {
+	TokenHash string             `json:"token_hash"`
+	UserID    pgtype.UUID        `json:"user_id"`
+	Reason    string             `json:"reason"`
+	ExpiresAt pgtype.Timestamptz `json:"expires_at"`
+}
+
+func (q *Queries) BlacklistToken(ctx context.Context, arg BlacklistTokenParams) error {
+	_, err := q.db.Exec(ctx, blacklistToken,
+		arg.TokenHash,
+		arg.UserID,
+		arg.Reason,
+		arg.ExpiresAt,
+	)
+	return err
+}
+
+const cleanupExpiredTokens = `-- name: CleanupExpiredTokens :exec
+DELETE FROM token_blacklist WHERE expires_at <= NOW()
+`
+
+func (q *Queries) CleanupExpiredTokens(ctx context.Context) error {
+	_, err := q.db.Exec(ctx, cleanupExpiredTokens)
 	return err
 }
 
@@ -252,6 +315,31 @@ type DeleteCarParams struct {
 func (q *Queries) DeleteCar(ctx context.Context, arg DeleteCarParams) error {
 	_, err := q.db.Exec(ctx, deleteCar, arg.ID, arg.UserID)
 	return err
+}
+
+const deleteUserByEmail = `-- name: DeleteUserByEmail :exec
+DELETE FROM users WHERE email = $1
+`
+
+func (q *Queries) DeleteUserByEmail(ctx context.Context, email string) error {
+	_, err := q.db.Exec(ctx, deleteUserByEmail, email)
+	return err
+}
+
+const getActivePasswordResetToken = `-- name: GetActivePasswordResetToken :one
+SELECT password_reset_token, password_reset_expires FROM users WHERE email = $1 AND password_reset_token IS NOT NULL AND password_reset_expires > NOW()
+`
+
+type GetActivePasswordResetTokenRow struct {
+	PasswordResetToken   pgtype.Text        `json:"password_reset_token"`
+	PasswordResetExpires pgtype.Timestamptz `json:"password_reset_expires"`
+}
+
+func (q *Queries) GetActivePasswordResetToken(ctx context.Context, email string) (GetActivePasswordResetTokenRow, error) {
+	row := q.db.QueryRow(ctx, getActivePasswordResetToken, email)
+	var i GetActivePasswordResetTokenRow
+	err := row.Scan(&i.PasswordResetToken, &i.PasswordResetExpires)
+	return i, err
 }
 
 const getAllAppointments = `-- name: GetAllAppointments :many
@@ -917,6 +1005,35 @@ func (q *Queries) GetUserByVerificationToken(ctx context.Context, emailVerificat
 		&i.CreatedAt,
 	)
 	return i, err
+}
+
+const isTokenBlacklisted = `-- name: IsTokenBlacklisted :one
+SELECT EXISTS(SELECT 1 FROM token_blacklist WHERE token_hash = $1 AND expires_at > NOW())
+`
+
+func (q *Queries) IsTokenBlacklisted(ctx context.Context, tokenHash string) (bool, error) {
+	row := q.db.QueryRow(ctx, isTokenBlacklisted, tokenHash)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
+const makeUserAdmin = `-- name: MakeUserAdmin :exec
+UPDATE users SET is_admin = TRUE WHERE email = $1
+`
+
+func (q *Queries) MakeUserAdmin(ctx context.Context, email string) error {
+	_, err := q.db.Exec(ctx, makeUserAdmin, email)
+	return err
+}
+
+const removeUserAdmin = `-- name: RemoveUserAdmin :exec
+UPDATE users SET is_admin = FALSE WHERE email = $1
+`
+
+func (q *Queries) RemoveUserAdmin(ctx context.Context, email string) error {
+	_, err := q.db.Exec(ctx, removeUserAdmin, email)
+	return err
 }
 
 const resetPassword = `-- name: ResetPassword :exec

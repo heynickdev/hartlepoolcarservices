@@ -79,5 +79,3 @@ func RenderPartialTemplate(w http.ResponseWriter, r *http.Request, tmplName stri
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
-
-

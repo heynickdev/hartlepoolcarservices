@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"context"
+	"hcs-full/database"
 	"hcs-full/models"
-	"hcs-full/utils"
 	"net/http"
 	"strings"
 	"time"
@@ -19,8 +19,16 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		tokenStr := c.Value
-		claims, err := utils.ParseJWT(tokenStr)
+		claims, err := database.ValidateJWTWithBlacklist(tokenStr)
 		if err != nil {
+			// Clear the invalid/blacklisted token
+			http.SetCookie(w, &http.Cookie{
+				Name:     "token",
+				Value:    "",
+				Expires:  time.Now().Add(-1 * time.Hour),
+				HttpOnly: true,
+				Path:     "/",
+			})
 			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
@@ -60,7 +68,7 @@ func SoftAuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		tokenStr := c.Value
-		claims, err := utils.ParseJWT(tokenStr)
+		claims, err := database.ValidateJWTWithBlacklist(tokenStr)
 		if err != nil { // Invalid token, just proceed without claims
 			next.ServeHTTP(w, r)
 			return
@@ -117,5 +125,3 @@ func CacheHeadersMiddleware(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
-
-

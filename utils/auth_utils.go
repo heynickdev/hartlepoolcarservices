@@ -2,6 +2,7 @@ package utils
 
 import (
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/hex"
 	"hcs-full/models"
 	"os"
@@ -59,4 +60,21 @@ func GenerateVerificationToken() (string, error) {
 	return hex.EncodeToString(bytes), nil
 }
 
+// HashToken creates a SHA256 hash of a JWT token for blacklisting
+func HashToken(token string) string {
+	hash := sha256.Sum256([]byte(token))
+	return hex.EncodeToString(hash[:])
+}
 
+// ValidateJWT parses and validates a JWT token, checking blacklist
+func ValidateJWT(tokenStr string) (*models.Claims, error) {
+	// Parse the token first to get basic validation
+	claims, err := ParseJWT(tokenStr)
+	if err != nil {
+		return nil, err
+	}
+
+	// The blacklist check will be done in the middleware
+	// We avoid the import cycle by not importing database here
+	return claims, nil
+}

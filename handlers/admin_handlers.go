@@ -79,18 +79,18 @@ func AdminDashboardHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := models.PageData{
-		Title:                 "Admin Dashboard",
-		IsAuthenticated:       true,
-		User:                  &adminUser,
-		AllCars:               allCars,
-		AllAppointments:       allAppointments,
-		TotalCars:             totalCars,
-		TotalAppointments:     totalAppointments,
-		PendingAppointments:   pendingAppointments,
-		AcceptedAppointments:  completedAppointments,
-		CarsByUser:            carsByUser,
-		Success:               r.URL.Query().Get("success"),
-		Error:                 r.URL.Query().Get("error"),
+		Title:                "Admin Dashboard",
+		IsAuthenticated:      true,
+		User:                 &adminUser,
+		AllCars:              allCars,
+		AllAppointments:      allAppointments,
+		TotalCars:            totalCars,
+		TotalAppointments:    totalAppointments,
+		PendingAppointments:  pendingAppointments,
+		AcceptedAppointments: completedAppointments,
+		CarsByUser:           carsByUser,
+		Success:              r.URL.Query().Get("success"),
+		Error:                r.URL.Query().Get("error"),
 	}
 
 	RenderTemplate(w, r, "admin_dashboard.html", data)
@@ -109,7 +109,6 @@ func AdminOverviewHandler(w http.ResponseWriter, r *http.Request) {
 		RenderTemplate(w, r, "error.html", models.PageData{Title: "Error", ErrorMessage: "Could not retrieve admin user details."})
 		return
 	}
-
 
 	// Get all cars
 	allCars, err := database.Queries.GetAllCarsWithUsers(context.Background())
@@ -288,11 +287,11 @@ func AdminCalendarHandler(w http.ResponseWriter, r *http.Request) {
 			"start": appt.Datetime.Time.Format(time.RFC3339),
 			"color": getStatusColor(appt.Status),
 			"extendedProps": map[string]interface{}{
-				"userName":   appt.UserName,
-				"userEmail":  appt.UserEmail,
-				"status":     appt.Status,
-				"carReg":     appt.CarRegistration.String,
-				"carMake":    appt.CarMake.String,
+				"userName":  appt.UserName,
+				"userEmail": appt.UserEmail,
+				"status":    appt.Status,
+				"carReg":    appt.CarRegistration.String,
+				"carMake":   appt.CarMake.String,
 			},
 		}
 		calendarEvents = append(calendarEvents, event)

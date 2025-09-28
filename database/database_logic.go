@@ -49,7 +49,6 @@ func ActivateTestUser() {
 	}
 }
 
-
 func SeedAdminUser() error {
 
 	adminEmail := os.Getenv("ADMIN_EMAIL")
@@ -57,8 +56,6 @@ func SeedAdminUser() error {
 		log.Println("ADMIN_EMAIL not set, skipping admin seed.")
 		return nil
 	}
-
-
 
 	adminPassword := os.Getenv("ADMIN_PASSWORD")
 	if adminPassword == "" {
@@ -99,5 +96,3 @@ func SeedAdminUser() error {
 	}
 	return err
 }
-
-
