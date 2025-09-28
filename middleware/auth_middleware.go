@@ -88,11 +88,12 @@ func SecurityHeadersMiddleware(next http.Handler) http.Handler {
 
 		// CSP - Content Security Policy
 		csp := "default-src 'self'; " +
-			"script-src 'self' 'unsafe-inline' unpkg.com cdn.jsdelivr.net; " +
-			"style-src 'self' 'unsafe-inline' unpkg.com cdnjs.cloudflare.com; " +
-			"img-src 'self' data: static.photos; " +
-			"font-src 'self' cdnjs.cloudflare.com; " +
-			"connect-src 'self' cdn.jsdelivr.net; " +
+			"script-src 'self' 'unsafe-inline' unpkg.com cdn.jsdelivr.net *.google.com *.googleapis.com *.gstatic.com; " +
+			"style-src 'self' 'unsafe-inline' unpkg.com cdnjs.cloudflare.com *.google.com *.googleapis.com *.gstatic.com; " +
+			"img-src 'self' data: static.photos *.google.com *.googleapis.com *.gstatic.com *.ggpht.com; " +
+			"font-src 'self' cdnjs.cloudflare.com *.gstatic.com; " +
+			"connect-src 'self' cdn.jsdelivr.net *.google.com *.googleapis.com; " +
+			"frame-src 'self' *.google.com *.googleapis.com; " +
 			"frame-ancestors 'none';"
 		w.Header().Set("Content-Security-Policy", csp)
 
