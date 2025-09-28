@@ -5,3 +5,5 @@ package-lock.json
 package.json
 server*
 tmp/*
+static/css/input.css
+.air.toml
