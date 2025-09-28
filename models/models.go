@@ -22,6 +22,7 @@ type PageData struct {
 	UserCars              []db.Car
 	AllCars               []db.GetAllCarsWithUsersRow
 	SelectedCar           *db.Car
+	VehicleOwner          *db.User
 	CarAppointments       []db.Appointment
 	AllAppointments       []db.GetAllAppointmentsRow
 	UserAppointments      []db.GetAppointmentsForUserRow

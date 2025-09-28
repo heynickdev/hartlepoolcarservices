@@ -78,6 +78,8 @@ func main() {
 	adminRoutes.Handle("/admin/update-status", http.HandlerFunc(handlers.AdminUpdateAppointmentStatusHandler))
 	adminRoutes.Handle("/admin/delete-appointment", http.HandlerFunc(handlers.AdminDeleteAppointmentHandler))
 	adminRoutes.Handle("/admin/cars", http.HandlerFunc(handlers.AdminCarsHandler))
+	adminRoutes.Handle("/admin/vehicle", http.HandlerFunc(handlers.AdminVehicleDetailHandler))
+	adminRoutes.Handle("/admin/delete-car", http.HandlerFunc(handlers.AdminDeleteCarHandler))
 	adminRoutes.Handle("/api/admin/calendar", http.HandlerFunc(handlers.AdminCalendarHandler))
 	http.Handle("/admin/", middleware.AuthMiddleware(middleware.AdminMiddleware(adminRoutes)))
 	http.Handle("/api/admin/", middleware.AuthMiddleware(middleware.AdminMiddleware(adminRoutes)))

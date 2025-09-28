@@ -20,6 +20,15 @@ func (q *Queries) AdminDeleteAppointment(ctx context.Context, id pgtype.UUID) er
 	return err
 }
 
+const adminDeleteCar = `-- name: AdminDeleteCar :exec
+DELETE FROM cars WHERE id = $1
+`
+
+func (q *Queries) AdminDeleteCar(ctx context.Context, id pgtype.UUID) error {
+	_, err := q.db.Exec(ctx, adminDeleteCar, id)
+	return err
+}
+
 const createAppointment = `-- name: CreateAppointment :one
 INSERT INTO appointments (user_id, car_id, datetime, title, description)
 VALUES ($1, $2, $3, $4, $5)

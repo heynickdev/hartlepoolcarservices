@@ -151,6 +151,9 @@ RETURNING *;
 -- name: DeleteCar :exec
 DELETE FROM cars WHERE id = $1 AND user_id = $2;
 
+-- name: AdminDeleteCar :exec
+DELETE FROM cars WHERE id = $1;
+
 -- name: GetAllCarsWithUsers :many
 SELECT
     c.*,

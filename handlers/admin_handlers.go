@@ -8,6 +8,7 @@ import (
 	"hcs-full/models"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -353,6 +354,119 @@ func generateAdminChartData(cars []db.GetAllCarsWithUsersRow, appointments []db.
 		}
 	}
 	return chartData
+}
+
+func AdminVehicleDetailHandler(w http.ResponseWriter, r *http.Request) {
+	claims, ok := r.Context().Value("userClaims").(*models.Claims)
+	if !ok || !claims.IsAdmin {
+		RenderTemplate(w, r, "error.html", models.PageData{Title: "Forbidden", ErrorMessage: "You do not have permission to view this page."})
+		return
+	}
+
+	// Get car ID from query parameter
+	carIDStr := r.URL.Query().Get("id")
+	if carIDStr == "" {
+		RenderTemplate(w, r, "error.html", models.PageData{Title: "Error", ErrorMessage: "Car ID is required."})
+		return
+	}
+
+	carID, err := uuid.Parse(carIDStr)
+	if err != nil {
+		RenderTemplate(w, r, "error.html", models.PageData{Title: "Error", ErrorMessage: "Invalid car ID."})
+		return
+	}
+
+	// Fetch admin user details
+	adminUser, err := database.Queries.GetUserByID(context.Background(), pgtype.UUID{Bytes: claims.UserID, Valid: true})
+	if err != nil {
+		RenderTemplate(w, r, "error.html", models.PageData{Title: "Error", ErrorMessage: "Could not retrieve admin user details."})
+		return
+	}
+
+	// Get car details
+	car, err := database.Queries.GetCarByID(context.Background(), pgtype.UUID{Bytes: carID, Valid: true})
+	if err != nil {
+		RenderTemplate(w, r, "error.html", models.PageData{Title: "Error", ErrorMessage: "Car not found."})
+		return
+	}
+
+	// Get vehicle owner details
+	vehicleOwner, err := database.Queries.GetUserByID(context.Background(), car.UserID)
+	if err != nil {
+		RenderTemplate(w, r, "error.html", models.PageData{Title: "Error", ErrorMessage: "Could not retrieve vehicle owner details."})
+		return
+	}
+
+	// Get appointments for this car
+	carAppointments, err := database.Queries.GetAppointmentsForCar(context.Background(), pgtype.UUID{Bytes: carID, Valid: true})
+	if err != nil {
+		log.Printf("Error getting appointments for car: %v", err)
+		carAppointments = []db.Appointment{}
+	}
+
+	data := models.PageData{
+		Title:           "Admin Vehicle Details",
+		IsAuthenticated: true,
+		User:            &adminUser,
+		SelectedCar:     &car,
+		VehicleOwner:    &vehicleOwner,
+		CarAppointments: carAppointments,
+		Success:         r.URL.Query().Get("success"),
+		Error:           r.URL.Query().Get("error"),
+	}
+
+	RenderTemplate(w, r, "admin_vehicle_detail.html", data)
+}
+
+func AdminDeleteCarHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	claims, ok := r.Context().Value("userClaims").(*models.Claims)
+	if !ok || !claims.IsAdmin {
+		http.Error(w, "Forbidden", http.StatusForbidden)
+		return
+	}
+
+	carIDStr := r.FormValue("carId")
+	if carIDStr == "" {
+		http.Error(w, "Car ID is required", http.StatusBadRequest)
+		return
+	}
+
+	carID, err := uuid.Parse(carIDStr)
+	if err != nil {
+		http.Error(w, "Invalid car ID", http.StatusBadRequest)
+		return
+	}
+
+	// Delete all appointments for this car first
+	_, err = database.Queries.GetAppointmentsForCar(context.Background(), pgtype.UUID{Bytes: carID, Valid: true})
+	if err == nil {
+		// If there are appointments, we should handle them (could cascade delete or restrict)
+		// For now, let's delete the appointments first
+		appointments, _ := database.Queries.GetAppointmentsForCar(context.Background(), pgtype.UUID{Bytes: carID, Valid: true})
+		for _, appt := range appointments {
+			database.Queries.AdminDeleteAppointment(context.Background(), appt.ID)
+		}
+	}
+
+	err = database.Queries.AdminDeleteCar(context.Background(), pgtype.UUID{Bytes: carID, Valid: true})
+	if err != nil {
+		log.Printf("Error deleting car: %v", err)
+		http.Redirect(w, r, "/admin/cars?error=Error+removing+vehicle", http.StatusSeeOther)
+		return
+	}
+
+	// Check if we're coming from the vehicle detail page
+	referer := r.Header.Get("Referer")
+	if strings.Contains(referer, "/admin/vehicle") {
+		http.Redirect(w, r, "/admin/dashboard?success=Vehicle+removed+successfully", http.StatusSeeOther)
+	} else {
+		http.Redirect(w, r, "/admin/cars?success=Vehicle+removed+successfully", http.StatusSeeOther)
+	}
 }
 
 func getStatusColor(status string) string {
