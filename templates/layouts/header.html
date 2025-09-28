@@ -42,14 +42,19 @@
       content="https://hartlepoolcarservices.com/static/logo.png"
     />
 
+    <!-- Preconnect to external domains for faster loading -->
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://static.photos" crossorigin>
+
     <!-- Stylesheets -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
     <link rel="stylesheet" href="/static/css/output.css" />
 
     <!-- Scripts (deferred for performance) -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
     <!-- Dark Mode FOUC Prevention -->
     <script>
@@ -196,18 +201,32 @@
         class="container mx-auto px-4 py-3 flex justify-between items-center"
       >
         <a href="/" class="flex items-center dark:hidden">
-          <img
-            src="/static/logo.png"
-            alt="Hartlepool Car Services"
-            class="h-12"
-          />
+          <picture>
+            <source srcset="/static/logo-small.webp" type="image/webp">
+            <img
+              src="/static/logo.png"
+              alt="Hartlepool Car Services"
+              class="h-12"
+              width="128"
+              height="48"
+              loading="eager"
+              fetchpriority="high"
+            />
+          </picture>
         </a>
         <a href="/" class="flex items-center hidden dark:inline-block">
-          <img
-            src="/static/logo-white.png"
-            alt="Hartlepool Car Services"
-            class="h-12"
-          />
+          <picture>
+            <source srcset="/static/logo-white-small.webp" type="image/webp">
+            <img
+              src="/static/logo-white.png"
+              alt="Hartlepool Car Services"
+              class="h-12"
+              width="128"
+              height="48"
+              loading="eager"
+              fetchpriority="high"
+            />
+          </picture>
         </a>
         <div class="hidden md:flex space-x-8">
           <a
@@ -231,7 +250,7 @@
             >Contact</a
           >
         </div>
-        <button id="mobile-menu-button" class="md:hidden focus:outline-none">
+        <button id="mobile-menu-button" class="md:hidden focus:outline-none" aria-label="Toggle mobile navigation menu">
           <i data-feather="menu"></i>
         </button>
       </div>

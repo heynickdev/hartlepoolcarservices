@@ -286,7 +286,7 @@ func UpdateEmailHandler(w http.ResponseWriter, r *http.Request) {
 			<p>You requested to change your email address to this one (%s) on your Hartlepool Car Services account. To confirm this email change, please click the button below:</p>
 
 			<div style="text-align: center; margin: 30px 0;">
-				<a href="%s" style="background-color: #f39c12; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Verify New Email Address</a>
+				<a href="%s" style="background-color: #3498db; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Verify New Email Address</a>
 			</div>
 
 			<p>If the button doesn't work, you can also copy and paste this link into your browser:</p>

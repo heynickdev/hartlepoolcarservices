@@ -35,6 +35,12 @@ func main() {
 	fs := http.FileServer(http.Dir("./static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
+	// Serve robots.txt from static directory
+	http.HandleFunc("/robots.txt", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "text/plain")
+		http.ServeFile(w, r, "./static/robots.txt")
+	})
+
 	// Public routes
 	http.HandleFunc("/", handlers.HomePage)
 	http.HandleFunc("/about", handlers.AboutPage)
@@ -92,7 +98,11 @@ func main() {
 		port = "8080"
 	}
 	log.Printf("Server starting on :%s...", port)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
+
+	// Wrap the default mux with security and cache middlewares
+	handler := middleware.SecurityHeadersMiddleware(middleware.CacheHeadersMiddleware(http.DefaultServeMux))
+
+	if err := http.ListenAndServe(":"+port, handler); err != nil {
 		log.Fatal(err)
 	}
 }
