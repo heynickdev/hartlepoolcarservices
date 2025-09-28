@@ -27,11 +27,6 @@ func main() {
 		log.Fatalf("Could not run database migrations: %v", err)
 	}
 
-	if err := database.SeedAdminUser(); err != nil {
-		log.Fatalf("Could not seed admin user: %v", err)
-	}
-	database.ActivateTestUser()
-
 	handlers.WsHub = handlers.NewHub()
 	go handlers.WsHub.Run()
 

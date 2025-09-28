@@ -384,7 +384,7 @@ func ProcessCommand(input string) error {
 	case "help":
 		ShowHelp()
 		return nil
-	case "listusers":
+	case "list":
 		return ListUsers()
 	case "makeadmin":
 		if len(parts) < 2 {
