@@ -51,7 +51,7 @@
                 <!-- Menu items -->
                 <nav class="mt-5 flex-1 px-4 space-y-1">
                     <a href="/dashboard" class="flex items-center space-x-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-3 rounded-lg text-base font-medium">
-                        <i class="fas fa-car-garage text-xl"></i>
+                        <i class="fas fa-grip text-xl"></i>
                         <span>Dashboard</span>
                     </a>
                     <a href="/add-car" class="flex items-center space-x-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-3 rounded-lg text-base font-medium">
@@ -101,10 +101,13 @@
                         <i class="fas fa-user-circle text-xl"></i>
                         <span class="text-base font-medium">{{.User.Name}}</span>
                     </div>
-                    <a href="/logout" class="flex items-center space-x-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/50 px-4 py-3 rounded-lg text-base font-medium w-full">
-                        <i class="fas fa-sign-out-alt text-xl"></i>
-                        <span>Logout</span>
-                    </a>
+            <a
+              href="/logout"
+              class="sm:hidden inline flex items-center space-x-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/50 px-4 py-3 rounded-lg text-base font-medium w-full"
+            >
+              <i class="fas fa-sign-out-alt text-xl"></i>
+              <span>Logout</span>
+            </a>
                 </div>
 
             </div>
