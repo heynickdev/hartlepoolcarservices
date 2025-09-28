@@ -90,7 +90,7 @@ func SecurityHeadersMiddleware(next http.Handler) http.Handler {
 		csp := "default-src 'self'; " +
 			"script-src 'self' 'unsafe-inline' unpkg.com cdn.jsdelivr.net *.google.com *.googleapis.com *.gstatic.com; " +
 			"style-src 'self' 'unsafe-inline' unpkg.com cdnjs.cloudflare.com *.google.com *.googleapis.com *.gstatic.com; " +
-			"img-src 'self' data: static.photos *.google.com *.googleapis.com *.gstatic.com *.ggpht.com; " +
+			"img-src 'self' data: https://static.photos *.google.com *.googleapis.com *.gstatic.com *.ggpht.com; " +
 			"font-src 'self' cdnjs.cloudflare.com *.gstatic.com; " +
 			"connect-src 'self' cdn.jsdelivr.net *.google.com *.googleapis.com; " +
 			"frame-src 'self' *.google.com *.googleapis.com; " +
