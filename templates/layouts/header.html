@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
       rel="canonical"
-      href="https://www.yourwebsite.com/{{.CanonicalURL}}"
+      href="https://hartlepoolcarservices.com/{{.CanonicalURL}}"
     />
     <!-- Adjust {{.CanonicalURL}} dynamically -->
 
@@ -39,14 +39,14 @@
     <meta name="twitter:description" content="{{.MetaDescription}}" />
     <meta
       name="twitter:image"
-      content="https://www.yourwebsite.com/images/social-share-image.jpg"
+      content="https://hartlepoolcarservices.com/static/logo.png"
     />
 
     <!-- Stylesheets -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/static/css/output.css" />
 
     <!-- Scripts (deferred for performance) -->
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -143,7 +143,12 @@
       <div class="container mx-auto flex justify-between items-center">
         <div class="text-sm">
           <i data-feather="phone" class="inline-block w-4 h-4 mr-1"></i> Call
-          us: <a class="hover:text-blue-600/50 dark:hover:text-blue-600" href="tel:+4407723652106">07723 652106</a>
+          us:
+          <a
+            class="hover:text-blue-600/50 dark:hover:text-blue-600"
+            href="tel:+4407723652106"
+            >07723 652106</a
+          >
         </div>
         <div class="flex space-x-4">
           {{if .IsAuthenticated}} {{if .User.IsAdmin}}

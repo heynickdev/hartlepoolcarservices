@@ -233,6 +233,29 @@ func CreateAppointmentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Validate appointment datetime restrictions
+	now := time.Now()
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, now.Location())
+
+	// Check if appointment is not in the past (must be today or later)
+	if datetime.Before(today) {
+		http.Redirect(w, r, "/vehicle?id="+carIDStr+"&error=Cannot+schedule+appointments+in+the+past", http.StatusSeeOther)
+		return
+	}
+
+	// Check if appointment is not on a Sunday (Sunday = 0)
+	if datetime.Weekday() == time.Sunday {
+		http.Redirect(w, r, "/vehicle?id="+carIDStr+"&error=Cannot+schedule+appointments+on+Sundays", http.StatusSeeOther)
+		return
+	}
+
+	// Check if appointment time is between 8am and 6pm
+	hour := datetime.Hour()
+	if hour < 8 || hour >= 18 {
+		http.Redirect(w, r, "/vehicle?id="+carIDStr+"&error=Appointments+must+be+between+8am+and+6pm", http.StatusSeeOther)
+		return
+	}
+
 	// Verify car ownership
 	car, err := database.Queries.GetCarByID(context.Background(), pgtype.UUID{Bytes: carID, Valid: true})
 	if err != nil || car.UserID.Bytes != claims.UserID {

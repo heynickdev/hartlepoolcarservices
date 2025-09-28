@@ -5,39 +5,58 @@ import (
 	"net/http"
 )
 
-type pageData struct {
-	Title string
-	MetaDescription string
-	CanonicalURL string
-}
-
 func HomePage(w http.ResponseWriter, r *http.Request) {
-	data := pageData{
+	data := models.PageData{
 		Title: "Home",
 		MetaDescription: "Hartlepoepool Car Services. Premium automotive services in Hartlepool. Quality repairs, diagnostics, and maintenance for all vehicle makes and models.",
 		CanonicalURL: "/",
 	}
-	RenderTemplate(w, r, "index.html", models.PageData{Title: data.Title, MetaDescription: data.MetaDescription, CanonicalURL: data.CanonicalURL})
+	RenderTemplate(w, r, "index.html", data)
 }
 
 func AboutPage(w http.ResponseWriter, r *http.Request) {
-	RenderTemplate(w, r, "about.html", models.PageData{Title: "About Us"})
+	data := models.PageData{
+		Title: "About",
+		MetaDescription: "Hartlepoepool Car Services. Premium automotive services in Hartlepool. Quality repairs, diagnostics, and maintenance for all vehicle makes and models.",
+		CanonicalURL: "/about",
+	}
+	RenderTemplate(w, r, "about.html", data)
 }
 
 func ServicesPage(w http.ResponseWriter, r *http.Request) {
-	RenderTemplate(w, r, "services.html", models.PageData{Title: "Our Services"})
+	data := models.PageData{
+		Title: "Services",
+		MetaDescription: "Hartlepoepool Car Services. Premium automotive services in Hartlepool. Quality repairs, diagnostics, and maintenance for all vehicle makes and models.",
+		CanonicalURL: "/services",
+	}
+	RenderTemplate(w, r, "services.html", data)
 }
 
 func ContactPage(w http.ResponseWriter, r *http.Request) {
-	RenderTemplate(w, r, "contact.html", models.PageData{Title: "Contact Us"})
+	data := models.PageData{
+		Title: "Contact",
+		MetaDescription: "Hartlepoepool Car Services. Premium automotive services in Hartlepool. Quality repairs, diagnostics, and maintenance for all vehicle makes and models.",
+		CanonicalURL: "/contact",
+	}
+	RenderTemplate(w, r, "contact.html", data)
 }
 
 func PrivacyPolicyPage(w http.ResponseWriter, r *http.Request) {
-	RenderTemplate(w, r, "privacy_policy.html", models.PageData{Title: "Privacy Policy"})
+	data := models.PageData{
+		Title: "Privacy Policy",
+		MetaDescription: "Hartlepoepool Car Services. Premium automotive services in Hartlepool. Quality repairs, diagnostics, and maintenance for all vehicle makes and models.",
+		CanonicalURL: "/privacy-policy",
+	}
+	RenderTemplate(w, r, "privacy_policy.html", data)
 }
 
 func TermsAndConditionsPage(w http.ResponseWriter, r *http.Request) {
-	RenderTemplate(w, r, "terms_and_conditions.html", models.PageData{Title: "Terms & Conditions"})
+	data := models.PageData{
+		Title: "Terms & Conditions",
+		MetaDescription: "Hartlepoepool Car Services. Premium automotive services in Hartlepool. Quality repairs, diagnostics, and maintenance for all vehicle makes and models.",
+		CanonicalURL: "/terms-and-conditions",
+	}
+	RenderTemplate(w, r, "terms_and_conditions.html", data)
 }
 
 

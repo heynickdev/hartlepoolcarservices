@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{.Title}} | Hartlepool Car Services</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/css/output.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script>
         tailwind.config = {
@@ -281,12 +281,28 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Service Type</label>
-                        <input type="text" name="title" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white" placeholder="e.g., Annual Service, MOT, Brake Check">
+                        <select name="title" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                            <option value="">Select a service type</option>
+                            <option value="Battery">Battery</option>
+                            <option value="Brakes">Brakes</option>
+                            <option value="Engine Diagnostics">Engine Diagnostics</option>
+                            <option value="Oil and Fluid">Oil and Fluid</option>
+                            <option value="Exhaust">Exhaust</option>
+                            <option value="Wheels and Alignment">Wheels and Alignment</option>
+                            <option value="Suspension">Suspension</option>
+                            <option value="Other">Other</option>
+                        </select>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Date & Time</label>
-                        <input type="datetime-local" name="datetime" required class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                        <input type="datetime-local" name="datetime" required
+                               id="appointmentDateTime"
+                               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            <i class="fas fa-info-circle"></i>
+                            Appointments: Mon-Sat, 8:00 AM - 6:00 PM only
+                        </p>
                     </div>
 
                     <div>
@@ -312,12 +328,86 @@
         function openAppointmentModal() {
             document.getElementById('appointmentModal').classList.remove('hidden');
             document.getElementById('appointmentModal').classList.add('flex');
+            setDateTimeConstraints();
         }
 
         function closeAppointmentModal() {
             document.getElementById('appointmentModal').classList.add('hidden');
             document.getElementById('appointmentModal').classList.remove('flex');
         }
+
+        // Set datetime constraints and validation
+        function setDateTimeConstraints() {
+            const datetimeInput = document.getElementById('appointmentDateTime');
+
+            // Set minimum datetime to today
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const minDateTime = today.toISOString().slice(0, 16);
+            datetimeInput.min = minDateTime;
+        }
+
+        // Validate appointment datetime on change
+        document.addEventListener('DOMContentLoaded', function() {
+            const datetimeInput = document.getElementById('appointmentDateTime');
+            const appointmentForm = document.querySelector('form[action="/create-appointment"]');
+
+            if (datetimeInput) {
+                datetimeInput.addEventListener('change', function() {
+                    const selectedDateTime = new Date(this.value);
+                    const dayOfWeek = selectedDateTime.getDay();
+                    const hour = selectedDateTime.getHours();
+
+                    // Check for Sunday (0)
+                    if (dayOfWeek === 0) {
+                        alert('Appointments cannot be scheduled on Sundays. Please select a different day.');
+                        this.value = '';
+                        return;
+                    }
+
+                    // Check for time range (8am-6pm)
+                    if (hour < 8 || hour >= 18) {
+                        alert('Appointments must be between 8:00 AM and 6:00 PM. Please select a different time.');
+                        this.value = '';
+                        return;
+                    }
+                });
+            }
+
+            // Additional validation on form submit
+            if (appointmentForm) {
+                appointmentForm.addEventListener('submit', function(e) {
+                    const datetimeValue = datetimeInput.value;
+                    if (!datetimeValue) {
+                        return; // Let browser handle required field validation
+                    }
+
+                    const selectedDateTime = new Date(datetimeValue);
+                    const now = new Date();
+                    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                    const dayOfWeek = selectedDateTime.getDay();
+                    const hour = selectedDateTime.getHours();
+
+                    if (selectedDateTime < today) {
+                        e.preventDefault();
+                        alert('Cannot schedule appointments in the past.');
+                        return;
+                    }
+
+                    if (dayOfWeek === 0) {
+                        e.preventDefault();
+                        alert('Appointments cannot be scheduled on Sundays.');
+                        return;
+                    }
+
+                    if (hour < 8 || hour >= 18) {
+                        e.preventDefault();
+                        alert('Appointments must be between 8:00 AM and 6:00 PM.');
+                        return;
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
