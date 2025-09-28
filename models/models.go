@@ -30,6 +30,7 @@ type PageData struct {
 	Success               string
 	Error                 string
 	ErrorMessage          string
+	Token                 string
 	TotalCars             int
 	TotalAppointments     int
 	AcceptedAppointments  int

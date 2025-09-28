@@ -175,4 +175,22 @@ SELECT * FROM users WHERE email_verification_token = $1 AND email_verification_e
 -- name: VerifyUserEmail :exec
 UPDATE users SET email_verified = TRUE, email_verification_token = NULL, email_verification_expires = NULL WHERE id = $1;
 
+-- name: SetPasswordResetToken :exec
+UPDATE users SET password_reset_token = $2, password_reset_expires = $3 WHERE email = $1;
+
+-- name: GetUserByPasswordResetToken :one
+SELECT * FROM users WHERE password_reset_token = $1 AND password_reset_expires > NOW();
+
+-- name: ResetPassword :exec
+UPDATE users SET password_hash = $2, password_reset_token = NULL, password_reset_expires = NULL WHERE id = $1;
+
+-- name: SetEmailChangeRequest :exec
+UPDATE users SET pending_email = $2, email_change_token = $3, email_change_expires = $4 WHERE id = $1;
+
+-- name: GetUserByEmailChangeToken :one
+SELECT * FROM users WHERE email_change_token = $1 AND email_change_expires > NOW();
+
+-- name: ConfirmEmailChange :exec
+UPDATE users SET email = pending_email, pending_email = NULL, email_change_token = NULL, email_change_expires = NULL, email_verified = TRUE WHERE id = $1;
+
 

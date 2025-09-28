@@ -2,14 +2,17 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"hcs-full/database"
 	"hcs-full/database/db"
 	"hcs-full/models"
 	"hcs-full/utils"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/jackc/pgx/v5"
 	"golang.org/x/crypto/bcrypt"
@@ -137,13 +140,24 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	success := r.URL.Query().Get("success")
 	signup := r.URL.Query().Get("signup")
 	verified := r.URL.Query().Get("verified")
+	error := r.URL.Query().Get("error")
+
 	data := models.PageData{Title: "Login"}
-	if success == "true" {
+
+	// Handle general success messages from URL
+	if success != "" && success != "true" {
+		data.Success = success
+	} else if success == "true" {
 		data.Success = "Registration successful! Please log in."
 	} else if signup == "true" {
 		data.Success = "Registration successful! Please check your email and click the verification link before logging in."
 	} else if verified == "true" {
 		data.Success = "Email verified successfully! You can now log in."
+	}
+
+	// Handle general error messages from URL
+	if error != "" {
+		data.Error = error
 	}
 	RenderTemplate(w, r, "login.html", data)
 }
@@ -233,18 +247,75 @@ func UpdateEmailHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	// err == sql.ErrNoRows means email doesn't exist, which is what we want
 
-	// Update email
-	err = database.Queries.UpdateUserEmail(context.Background(), db.UpdateUserEmailParams{
-		ID:    pgtype.UUID{Bytes: claims.UserID, Valid: true},
-		Email: newEmail,
+	// Generate email change token
+	changeToken := uuid.New().String()
+	changeExpires := time.Now().Add(24 * time.Hour) // Token expires in 24 hours
+
+	// Store email change request
+	err = database.Queries.SetEmailChangeRequest(context.Background(), db.SetEmailChangeRequestParams{
+		ID:                 pgtype.UUID{Bytes: claims.UserID, Valid: true},
+		PendingEmail:       pgtype.Text{String: newEmail, Valid: true},
+		EmailChangeToken:   pgtype.Text{String: changeToken, Valid: true},
+		EmailChangeExpires: pgtype.Timestamptz{Time: changeExpires, Valid: true},
 	})
 	if err != nil {
-		log.Printf("Error updating email: %v", err)
-		http.Redirect(w, r, "/profile?error=Error+updating+email", http.StatusSeeOther)
+		log.Printf("Error setting email change request: %v", err)
+		http.Redirect(w, r, "/profile?error=Error+processing+email+change+request", http.StatusSeeOther)
 		return
 	}
 
-	http.Redirect(w, r, "/profile?success=Email+updated+successfully", http.StatusSeeOther)
+	// Send verification email to new email address
+	baseURL := os.Getenv("BASE_URL")
+	if baseURL == "" {
+		baseURL = "http://localhost:8080"
+	}
+
+	// Ensure HTTPS for production domain
+	if baseURL == "hartlepoolcarservices.com" {
+		baseURL = "https://hartlepoolcarservices.com"
+	}
+
+	verifyURL := fmt.Sprintf("%s/verify-email-change?token=%s", baseURL, changeToken)
+	subject := "Verify Your New Email Address - Hartlepool Car Services"
+	body := fmt.Sprintf(`
+	<html>
+	<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+		<div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+			<h2 style="color: #2c3e50;">Email Address Change Verification</h2>
+			<p>Hello %s,</p>
+			<p>You requested to change your email address to this one (%s) on your Hartlepool Car Services account. To confirm this email change, please click the button below:</p>
+
+			<div style="text-align: center; margin: 30px 0;">
+				<a href="%s" style="background-color: #f39c12; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Verify New Email Address</a>
+			</div>
+
+			<p>If the button doesn't work, you can also copy and paste this link into your browser:</p>
+			<p style="word-break: break-all; color: #7f8c8d;">%s</p>
+
+			<p style="margin-top: 30px;">This verification link will expire in 24 hours.</p>
+
+			<hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+			<p style="font-size: 12px; color: #7f8c8d;">
+				If you didn't request this email change, please ignore this email and contact our support team.
+			</p>
+			<p style="font-size: 12px; color: #7f8c8d;">
+				Hartlepool Car Services<br>
+				Email: info@hartlepoolcarservices.com
+			</p>
+		</div>
+	</body>
+	</html>
+	`, user.Name, newEmail, verifyURL, verifyURL)
+
+	emailService := utils.NewEmailService()
+	err = emailService.SendEmail(newEmail, subject, body)
+	if err != nil {
+		log.Printf("Error sending email change verification: %v", err)
+		http.Redirect(w, r, "/profile?error=Error+sending+verification+email", http.StatusSeeOther)
+		return
+	}
+
+	http.Redirect(w, r, "/profile?success=Verification+email+sent+to+your+new+email+address.+Please+check+your+inbox+and+click+the+link+to+confirm+the+change.", http.StatusSeeOther)
 }
 
 func UpdatePasswordHandler(w http.ResponseWriter, r *http.Request) {
@@ -347,6 +418,257 @@ func VerifyEmailHandler(w http.ResponseWriter, r *http.Request) {
 
 func VerifyEmailReminderHandler(w http.ResponseWriter, r *http.Request) {
 	RenderTemplate(w, r, "verify_email.html", models.PageData{Title: "Email Verification Required"})
+}
+
+func ForgotPasswordHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		data := models.PageData{
+			Title: "Forgot Password",
+		}
+		RenderTemplate(w, r, "forgot_password.html", data)
+		return
+	}
+
+	if r.Method == http.MethodPost {
+		email := r.FormValue("email")
+		if email == "" {
+			data := models.PageData{
+				Title: "Forgot Password",
+				Error: "Email is required",
+			}
+			RenderTemplate(w, r, "forgot_password.html", data)
+			return
+		}
+
+		// Check if user exists
+		user, err := database.Queries.GetUserByEmail(context.Background(), email)
+		if err != nil {
+			// Don't reveal if email exists or not for security
+			data := models.PageData{
+				Title:   "Forgot Password",
+				Success: "If an account with that email exists, we've sent you a password reset link.",
+			}
+			RenderTemplate(w, r, "forgot_password.html", data)
+			return
+		}
+
+		// Generate reset token
+		resetToken := uuid.New().String()
+		resetExpires := time.Now().Add(1 * time.Hour) // Token expires in 1 hour
+
+		// Store reset token in database
+		err = database.Queries.SetPasswordResetToken(context.Background(), db.SetPasswordResetTokenParams{
+			Email:                email,
+			PasswordResetToken:   pgtype.Text{String: resetToken, Valid: true},
+			PasswordResetExpires: pgtype.Timestamptz{Time: resetExpires, Valid: true},
+		})
+		if err != nil {
+			log.Printf("Error setting password reset token: %v", err)
+			data := models.PageData{
+				Title: "Forgot Password",
+				Error: "Error processing request. Please try again.",
+			}
+			RenderTemplate(w, r, "forgot_password.html", data)
+			return
+		}
+
+		// Send reset email
+		baseURL := os.Getenv("BASE_URL")
+		if baseURL == "" {
+			baseURL = "http://localhost:8080"
+		}
+
+		// Ensure HTTPS for production domain
+		if baseURL == "hartlepoolcarservices.com" {
+			baseURL = "https://hartlepoolcarservices.com"
+		}
+
+		resetURL := fmt.Sprintf("%s/reset-password?token=%s", baseURL, resetToken)
+		subject := "Password Reset - Hartlepool Car Services"
+		body := fmt.Sprintf(`
+		<html>
+		<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+			<div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+				<h2 style="color: #2c3e50;">Password Reset Request</h2>
+				<p>Hello %s,</p>
+				<p>You requested a password reset for your Hartlepool Car Services account. To reset your password, please click the button below:</p>
+
+				<div style="text-align: center; margin: 30px 0;">
+					<a href="%s" style="background-color: #3498db; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Reset Password</a>
+				</div>
+
+				<p>If the button doesn't work, you can also copy and paste this link into your browser:</p>
+				<p style="word-break: break-all; color: #7f8c8d;">%s</p>
+
+				<p style="margin-top: 30px;">This password reset link will expire in 1 hour.</p>
+
+				<hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+				<p style="font-size: 12px; color: #7f8c8d;">
+					If you didn't request this password reset, please ignore this email and your password will remain unchanged.
+				</p>
+				<p style="font-size: 12px; color: #7f8c8d;">
+					Hartlepool Car Services<br>
+					Email: info@hartlepoolcarservices.com
+				</p>
+			</div>
+		</body>
+		</html>
+		`, user.Name, resetURL, resetURL)
+
+		emailService := utils.NewEmailService()
+		err = emailService.SendEmail(user.Email, subject, body)
+		if err != nil {
+			log.Printf("Error sending password reset email: %v", err)
+			data := models.PageData{
+				Title: "Forgot Password",
+				Error: "Error sending email. Please try again.",
+			}
+			RenderTemplate(w, r, "forgot_password.html", data)
+			return
+		}
+
+		// Redirect to login page with success message
+		http.Redirect(w, r, "/login?success=Password+reset+link+sent!+Check+your+email+for+instructions.", http.StatusSeeOther)
+		return
+	}
+}
+
+func ResetPasswordHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodGet {
+		token := r.URL.Query().Get("token")
+		if token == "" {
+			data := models.PageData{
+				Title: "Reset Password",
+				Error: "Invalid reset link",
+			}
+			RenderTemplate(w, r, "reset_password.html", data)
+			return
+		}
+
+		// Verify token
+		_, err := database.Queries.GetUserByPasswordResetToken(context.Background(), pgtype.Text{String: token, Valid: true})
+		if err != nil {
+			data := models.PageData{
+				Title: "Reset Password",
+				Error: "Invalid or expired reset link",
+			}
+			RenderTemplate(w, r, "reset_password.html", data)
+			return
+		}
+
+		data := models.PageData{
+			Title: "Reset Password",
+			Token: token,
+		}
+		RenderTemplate(w, r, "reset_password.html", data)
+		return
+	}
+
+	if r.Method == http.MethodPost {
+		token := r.FormValue("token")
+		password := r.FormValue("password")
+		confirmPassword := r.FormValue("confirm_password")
+
+		if token == "" || password == "" || confirmPassword == "" {
+			data := models.PageData{
+				Title: "Reset Password",
+				Token: token,
+				Error: "All fields are required",
+			}
+			RenderTemplate(w, r, "reset_password.html", data)
+			return
+		}
+
+		if password != confirmPassword {
+			data := models.PageData{
+				Title: "Reset Password",
+				Token: token,
+				Error: "Passwords do not match",
+			}
+			RenderTemplate(w, r, "reset_password.html", data)
+			return
+		}
+
+		if len(password) < 6 {
+			data := models.PageData{
+				Title: "Reset Password",
+				Token: token,
+				Error: "Password must be at least 6 characters long",
+			}
+			RenderTemplate(w, r, "reset_password.html", data)
+			return
+		}
+
+		// Verify token and get user
+		user, err := database.Queries.GetUserByPasswordResetToken(context.Background(), pgtype.Text{String: token, Valid: true})
+		if err != nil {
+			data := models.PageData{
+				Title: "Reset Password",
+				Token: token,
+				Error: "Invalid or expired reset link",
+			}
+			RenderTemplate(w, r, "reset_password.html", data)
+			return
+		}
+
+		// Hash new password
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		if err != nil {
+			log.Printf("Error hashing password: %v", err)
+			data := models.PageData{
+				Title: "Reset Password",
+				Token: token,
+				Error: "Error processing request. Please try again.",
+			}
+			RenderTemplate(w, r, "reset_password.html", data)
+			return
+		}
+
+		// Update password and clear reset token
+		err = database.Queries.ResetPassword(context.Background(), db.ResetPasswordParams{
+			ID:           user.ID,
+			PasswordHash: string(hashedPassword),
+		})
+		if err != nil {
+			log.Printf("Error resetting password: %v", err)
+			data := models.PageData{
+				Title: "Reset Password",
+				Token: token,
+				Error: "Error updating password. Please try again.",
+			}
+			RenderTemplate(w, r, "reset_password.html", data)
+			return
+		}
+
+		// Redirect to login page with success message
+		http.Redirect(w, r, "/login?success=Password+reset+successfully!+You+can+now+login+with+your+new+password.", http.StatusSeeOther)
+		return
+	}
+}
+
+func VerifyEmailChangeHandler(w http.ResponseWriter, r *http.Request) {
+	token := r.URL.Query().Get("token")
+	if token == "" {
+		http.Redirect(w, r, "/profile?error=Invalid+verification+link", http.StatusSeeOther)
+		return
+	}
+
+	// Verify token and get user
+	user, err := database.Queries.GetUserByEmailChangeToken(context.Background(), pgtype.Text{String: token, Valid: true})
+	if err != nil {
+		http.Redirect(w, r, "/profile?error=Invalid+or+expired+verification+link", http.StatusSeeOther)
+		return
+	}
+
+	// Confirm email change
+	err = database.Queries.ConfirmEmailChange(context.Background(), user.ID)
+	if err != nil {
+		log.Printf("Error confirming email change: %v", err)
+		http.Redirect(w, r, "/profile?error=Error+updating+email", http.StatusSeeOther)
+		return
+	}
+
+	http.Redirect(w, r, "/profile?success=Email+address+updated+successfully", http.StatusSeeOther)
 }
 
 

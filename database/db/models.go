@@ -59,5 +59,10 @@ type User struct {
 	EmailVerified            bool               `json:"email_verified"`
 	EmailVerificationToken   pgtype.Text        `json:"email_verification_token"`
 	EmailVerificationExpires pgtype.Timestamptz `json:"email_verification_expires"`
+	PasswordResetToken       pgtype.Text        `json:"password_reset_token"`
+	PasswordResetExpires     pgtype.Timestamptz `json:"password_reset_expires"`
+	PendingEmail             pgtype.Text        `json:"pending_email"`
+	EmailChangeToken         pgtype.Text        `json:"email_change_token"`
+	EmailChangeExpires       pgtype.Timestamptz `json:"email_change_expires"`
 	CreatedAt                pgtype.Timestamptz `json:"created_at"`
 }

@@ -49,6 +49,9 @@ func main() {
 	http.HandleFunc("/logout", handlers.LogoutHandler)
 	http.HandleFunc("/verify-email", handlers.VerifyEmailHandler)
 	http.HandleFunc("/verify-email-reminder", handlers.VerifyEmailReminderHandler)
+	http.HandleFunc("/verify-email-change", handlers.VerifyEmailChangeHandler)
+	http.HandleFunc("/forgot-password", handlers.ForgotPasswordHandler)
+	http.HandleFunc("/reset-password", handlers.ResetPasswordHandler)
 
 	// Authenticated routes
 	http.Handle("/dashboard", middleware.AuthMiddleware(http.HandlerFunc(handlers.DashboardHandler)))
