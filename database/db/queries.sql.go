@@ -1018,6 +1018,46 @@ func (q *Queries) IsTokenBlacklisted(ctx context.Context, tokenHash string) (boo
 	return exists, err
 }
 
+const listAllUsers = `-- name: ListAllUsers :many
+SELECT id, name, email, is_admin, email_verified, created_at FROM users ORDER BY created_at DESC
+`
+
+type ListAllUsersRow struct {
+	ID            pgtype.UUID        `json:"id"`
+	Name          string             `json:"name"`
+	Email         string             `json:"email"`
+	IsAdmin       bool               `json:"is_admin"`
+	EmailVerified bool               `json:"email_verified"`
+	CreatedAt     pgtype.Timestamptz `json:"created_at"`
+}
+
+func (q *Queries) ListAllUsers(ctx context.Context) ([]ListAllUsersRow, error) {
+	rows, err := q.db.Query(ctx, listAllUsers)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListAllUsersRow
+	for rows.Next() {
+		var i ListAllUsersRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Email,
+			&i.IsAdmin,
+			&i.EmailVerified,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const makeUserAdmin = `-- name: MakeUserAdmin :exec
 UPDATE users SET is_admin = TRUE WHERE email = $1
 `
@@ -1068,6 +1108,21 @@ func (q *Queries) SetEmailChangeRequest(ctx context.Context, arg SetEmailChangeR
 		arg.EmailChangeToken,
 		arg.EmailChangeExpires,
 	)
+	return err
+}
+
+const setEmailVerificationToken = `-- name: SetEmailVerificationToken :exec
+UPDATE users SET email_verification_token = $2, email_verification_expires = $3 WHERE id = $1
+`
+
+type SetEmailVerificationTokenParams struct {
+	ID                       pgtype.UUID        `json:"id"`
+	EmailVerificationToken   pgtype.Text        `json:"email_verification_token"`
+	EmailVerificationExpires pgtype.Timestamptz `json:"email_verification_expires"`
+}
+
+func (q *Queries) SetEmailVerificationToken(ctx context.Context, arg SetEmailVerificationTokenParams) error {
+	_, err := q.db.Exec(ctx, setEmailVerificationToken, arg.ID, arg.EmailVerificationToken, arg.EmailVerificationExpires)
 	return err
 }
 

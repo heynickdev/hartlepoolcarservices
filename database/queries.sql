@@ -217,6 +217,12 @@ WHERE NOT EXISTS (
 -- name: CleanupExpiredTokens :exec
 DELETE FROM token_blacklist WHERE expires_at <= NOW();
 
+-- name: ListAllUsers :many
+SELECT id, name, email, is_admin, email_verified, created_at FROM users ORDER BY created_at DESC;
+
+-- name: SetEmailVerificationToken :exec
+UPDATE users SET email_verification_token = $2, email_verification_expires = $3 WHERE id = $1;
+
 -- name: MakeUserAdmin :exec
 UPDATE users SET is_admin = TRUE WHERE email = $1;
 
