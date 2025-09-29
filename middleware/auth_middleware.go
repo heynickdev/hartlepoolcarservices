@@ -4,6 +4,7 @@ import (
 	"context"
 	"hcs-full/database"
 	"hcs-full/models"
+	"hcs-full/utils"
 	"net/http"
 	"strings"
 	"time"
@@ -48,8 +49,27 @@ func AdminMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		if !claims.IsAdmin {
+		if !utils.IsAdmin(claims.Role) {
 			http.Error(w, "Forbidden: You do not have admin privileges.", http.StatusForbidden)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+// SuperAdminMiddleware checks if the user has super admin privileges.
+// This should be chained AFTER AuthMiddleware.
+func SuperAdminMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		claims, ok := r.Context().Value("userClaims").(*models.Claims)
+		if !ok {
+			http.Error(w, "User claims not found", http.StatusInternalServerError)
+			return
+		}
+
+		if !utils.IsSuperAdmin(claims.Role) {
+			http.Error(w, "Forbidden: You do not have super admin privileges.", http.StatusForbidden)
 			return
 		}
 

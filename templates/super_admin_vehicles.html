@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}} | Hartlepool Car Services</title>
+
+    <!-- Preconnect to external domains for faster loading -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+
+    <link rel="stylesheet" href="/static/css/output.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/static/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/static/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="/static/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="HCS" />
+    <link rel="manifest" href="/static/favicon/site.webmanifest" />
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        {{ template "super_admin_nav" . }}
+    </nav>
+
+    <div class="lg:flex">
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50 lg:hidden" style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);">
+            <div class="fixed inset-y-0 left-0 flex flex-col w-full max-w-xs bg-white dark:bg-gray-800">
+                <!-- Close button -->
+                <div class="absolute top-0 right-0 -mr-12 pt-2">
+                    <button id="mobile-menu-close" class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                        <i class="fas fa-times text-white text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Menu header -->
+                <div class="flex items-center flex-shrink-0 px-4 py-4 border-b border-gray-200 dark:border-gray-700">
+                    <img src="/static/logo.png" alt="Logo" class="h-8 w-auto dark:hidden inline">
+                    <img src="/static/logo-white.png" alt="Logo" class="h-8 w-auto dark:inline hidden">
+                    <span class="ml-3 font-semibold text-gray-900 dark:text-white">Super Admin</span>
+                </div>
+
+                <!-- Menu items -->
+                <nav class="mt-5 flex-1 px-4 space-y-1">
+                    <a href="/super-admin/dashboard" class="flex items-center space-x-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-3 rounded-lg text-base font-medium">
+                        <i class="fas fa-crown text-xl"></i>
+                        <span>Super Dashboard</span>
+                    </a>
+                    <a href="/super-admin/users" class="flex items-center space-x-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-3 rounded-lg text-base font-medium">
+                        <i class="fas fa-users text-xl"></i>
+                        <span>User Management</span>
+                    </a>
+                    <a href="/super-admin/vehicles" class="flex items-center space-x-3 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/50 px-4 py-3 rounded-lg text-base font-medium">
+                        <i class="fas fa-car text-xl"></i>
+                        <span>Vehicle Management</span>
+                    </a>
+
+                    <!-- View Toggles -->
+                    <div class="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
+                        <p class="px-4 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Switch View</p>
+                        <a href="/super-admin/toggle-dashboard?target=admin" class="flex items-center space-x-3 text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-200 hover:bg-blue-50 dark:hover:bg-blue-900/50 px-4 py-3 rounded-lg text-base font-medium">
+                            <i class="fas fa-user-cog text-xl"></i>
+                            <span>Admin View</span>
+                        </a>
+                        <a href="/dashboard" class="flex items-center space-x-3 text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-200 hover:bg-green-50 dark:hover:bg-green-900/50 px-4 py-3 rounded-lg text-base font-medium">
+                            <i class="fas fa-user text-xl"></i>
+                            <span>My Dashboard</span>
+                        </a>
+                    </div>
+                </nav>
+
+                <!-- User info and logout at bottom -->
+                <div class="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 p-4 space-y-2">
+                    <div class="flex items-center space-x-3 px-2">
+                        <i class="fas fa-crown text-xl text-yellow-500"></i>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">{{.User.Name}}</p>
+                            <p class="text-xs font-medium text-yellow-600 dark:text-yellow-400">Super Admin</p>
+                        </div>
+                    </div>
+                    <a href="/logout" class="flex items-center space-x-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/50 px-4 py-3 rounded-lg text-base font-medium w-full">
+                        <i class="fas fa-sign-out-alt text-xl"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="hidden lg:block w-64 min-h-screen bg-white dark:bg-gray-800 shadow-sm border-r border-gray-200 dark:border-gray-700 pt-4">
+            <div class="p-4 flex flex-col h-full">
+                <nav class="space-y-2">
+                    <a href="/super-admin/dashboard" class="flex items-center space-x-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-2 rounded-lg">
+                        <i class="fas fa-crown"></i>
+                        <span>Super Dashboard</span>
+                    </a>
+                    <a href="/super-admin/users" class="flex items-center space-x-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-2 rounded-lg">
+                        <i class="fas fa-users"></i>
+                        <span>User Management</span>
+                    </a>
+                    <a href="/super-admin/vehicles" class="flex items-center space-x-3 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/50 px-4 py-2 rounded-lg">
+                        <i class="fas fa-car"></i>
+                        <span>Vehicle Management</span>
+                    </a>
+
+                    <!-- View Toggles Section -->
+                    <div class="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
+                        <p class="px-4 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Switch View</p>
+                        <a href="/super-admin/toggle-dashboard?target=admin" class="flex items-center space-x-3 text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-200 hover:bg-blue-50 dark:hover:bg-blue-900/50 px-4 py-2 rounded-lg">
+                            <i class="fas fa-user-cog"></i>
+                            <span>Admin View</span>
+                        </a>
+                        <a href="/dashboard" class="flex items-center space-x-3 text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-200 hover:bg-green-50 dark:hover:bg-green-900/50 px-4 py-2 rounded-lg">
+                            <i class="fas fa-user"></i>
+                            <span>My Dashboard</span>
+                        </a>
+                    </div>
+                </nav>
+
+                <!-- User info and logout at bottom -->
+                <div class="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
+                    <div class="flex items-center space-x-3 px-4 py-2 text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-crown text-xl text-yellow-500"></i>
+                        <div>
+                            <p class="text-sm font-medium capitalize">{{.User.Name}}</p>
+                            <p class="text-xs text-yellow-600 dark:text-yellow-400">Super Admin</p>
+                        </div>
+                    </div>
+                    <a href="/logout" class="flex items-center space-x-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/50 px-4 py-2 rounded-lg text-sm font-medium w-full">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 lg:pl-0">
+            <main class="p-6">
+                <!-- Page Header -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Vehicle Management</h1>
+                            <p class="mt-2 text-gray-600 dark:text-gray-400">Manage vehicle allocations and ownership across all users</p>
+                        </div>
+                        <button id="mobile-burger" class="lg:hidden p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Vehicles Table -->
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+                    <div class="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">All Vehicles</h3>
+                        <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">Manage vehicle ownership and allocations across all users</p>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Vehicle</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Owner</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Tax Status</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">MOT Status</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Registered</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                {{range .AllCars}}
+                                <tr>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div class="flex-shrink-0 h-10 w-10">
+                                                {{$colorClass := "gray"}}
+                                                {{if .Colour.Valid}}
+                                                    {{$color := .Colour.String | lower}}
+                                                    {{if or (contains $color "red") (contains $color "rouge")}}{{$colorClass = "red"}}{{end}}
+                                                    {{if or (contains $color "blue") (contains $color "bleu")}}{{$colorClass = "blue"}}{{end}}
+                                                    {{if or (contains $color "green") (contains $color "vert")}}{{$colorClass = "green"}}{{end}}
+                                                    {{if or (contains $color "yellow") (contains $color "jaune")}}{{$colorClass = "yellow"}}{{end}}
+                                                    {{if or (contains $color "black") (contains $color "noir")}}{{$colorClass = "gray"}}{{end}}
+                                                    {{if or (contains $color "white") (contains $color "blanc") (contains $color "silver") (contains $color "grey")}}{{$colorClass = "slate"}}{{end}}
+                                                    {{if or (contains $color "orange")}}{{$colorClass = "orange"}}{{end}}
+                                                    {{if or (contains $color "purple") (contains $color "violet")}}{{$colorClass = "purple"}}{{end}}
+                                                    {{if or (contains $color "brown") (contains $color "marron") (contains $color "bronze")}}{{$colorClass = "amber"}}{{end}}
+                                                {{end}}
+                                                <div class="h-10 w-10 rounded-full bg-{{$colorClass}}-100 dark:bg-{{$colorClass}}-900 flex items-center justify-center">
+                                                    <i class="fas fa-car text-{{$colorClass}}-600 dark:text-{{$colorClass}}-400"></i>
+                                                </div>
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900 dark:text-white">{{.RegistrationNumber}}</div>
+                                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                                    {{if .Make.Valid}}{{.Make.String}}{{else}}Unknown Make{{end}}
+                                                    {{if .Colour.Valid}}• {{.Colour.String}}{{end}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            <div>
+                                                <div class="text-sm font-medium text-gray-900 dark:text-white">{{.UserName}}</div>
+                                                <div class="text-sm text-gray-500 dark:text-gray-400">{{.UserEmail}}</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        {{if .TaxStatus.Valid}}
+                                        <div class="flex flex-col">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                                {{if eq .TaxStatus.String "Taxed"}}bg-green-100 text-green-800 dark:bg-green-700 dark:text-green-100{{else}}bg-red-100 text-red-800 dark:bg-red-700 dark:text-red-100{{end}}">
+                                                {{if eq .TaxStatus.String "Taxed"}}
+                                                    <i class="fas fa-check-circle mr-1"></i>
+                                                {{else}}
+                                                    <i class="fas fa-exclamation-circle mr-1"></i>
+                                                {{end}}
+                                                {{.TaxStatus.String}}
+                                            </span>
+                                            {{if .TaxDueDate.Valid}}
+                                            <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Due: {{.TaxDueDate.Time.Format "2006-01-02"}}</div>
+                                            {{end}}
+                                        </div>
+                                        {{else}}
+                                        <span class="text-sm text-gray-500 dark:text-gray-400">Unknown</span>
+                                        {{end}}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        {{if .MotStatus.Valid}}
+                                        <div class="flex flex-col">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                                                {{if eq .MotStatus.String "Valid"}}bg-green-100 text-green-800 dark:bg-green-700 dark:text-green-100{{else}}bg-red-100 text-red-800 dark:bg-red-700 dark:text-red-100{{end}}">
+                                                {{if eq .MotStatus.String "Valid"}}
+                                                    <i class="fas fa-check-circle mr-1"></i>
+                                                {{else}}
+                                                    <i class="fas fa-exclamation-circle mr-1"></i>
+                                                {{end}}
+                                                {{.MotStatus.String}}
+                                            </span>
+                                            {{if .MotExpiryDate.Valid}}
+                                            <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">Expires: {{.MotExpiryDate.Time.Format "2006-01-02"}}</div>
+                                            {{end}}
+                                        </div>
+                                        {{else}}
+                                        <span class="text-sm text-gray-500 dark:text-gray-400">Unknown</span>
+                                        {{end}}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                        {{.CreatedAt.Time.Format "2006-01-02"}}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <div class="flex flex-col space-y-2">
+                                            <!-- Allocate to User -->
+                                            <div class="flex space-x-2">
+                                                <select id="user-select-{{.ID.Bytes | printf "%x"}}" class="block text-sm border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:border-primary-500 focus:ring-primary-500">
+                                                    <option value="">Allocate to User</option>
+                                                    {{$currentCarUserID := .UserID.Bytes}}
+                                                    {{range $.AllUsers}}
+                                                    <option value="{{.ID.Bytes | printf "%x"}}" {{if eq (printf "%x" .ID.Bytes) (printf "%x" $currentCarUserID)}}selected{{end}}>{{.Name}} ({{.Email}})</option>
+                                                    {{end}}
+                                                </select>
+                                                <button onclick="allocateVehicle('{{.ID.Bytes | printf "%x"}}')" class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200 dark:bg-blue-700 dark:text-blue-100 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                                    <i class="fas fa-user-plus mr-1"></i>Allocate
+                                                </button>
+                                            </div>
+
+                                            <!-- Remove Vehicle -->
+                                            <div class="flex space-x-2">
+                                                <button onclick="removeVehicle('{{.ID.Bytes | printf "%x"}}', '{{.RegistrationNumber}}')" class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-red-700 bg-red-100 hover:bg-red-200 dark:bg-red-700 dark:text-red-100 dark:hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                                    <i class="fas fa-trash mr-1"></i>Remove Vehicle
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {{end}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div id="message-container" class="fixed top-4 right-4 z-50"></div>
+
+    <script>
+        // Mobile menu toggle
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const mobileMenuOpen = document.getElementById('mobile-burger');
+        const mobileMenuClose = document.getElementById('mobile-menu-close');
+
+        mobileMenuOpen?.addEventListener('click', () => {
+            mobileMenuOverlay?.classList.remove('hidden');
+        });
+
+        mobileMenuClose?.addEventListener('click', () => {
+            mobileMenuOverlay?.classList.add('hidden');
+        });
+
+        // Close on overlay click
+        mobileMenuOverlay?.addEventListener('click', (e) => {
+            if (e.target === mobileMenuOverlay) {
+                mobileMenuOverlay.classList.add('hidden');
+            }
+        });
+
+        // Utility function to show messages
+        function showMessage(message, type = 'success') {
+            const container = document.getElementById('message-container');
+            const messageDiv = document.createElement('div');
+
+            const bgClass = type === 'success' ? 'bg-green-100 dark:bg-green-800/90' : 'bg-red-100 dark:bg-red-800/90';
+            const borderClass = type === 'success' ? 'border-green-400 dark:border-green-600' : 'border-red-400 dark:border-red-600';
+            const textClass = type === 'success' ? 'text-green-700 dark:text-green-100' : 'text-red-700 dark:text-red-100';
+
+            messageDiv.className = `mb-4 p-4 rounded-lg shadow-lg border transform transition-all duration-500 ${bgClass} ${borderClass} ${textClass}`;
+
+            messageDiv.innerHTML = `
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'} mr-2"></i>
+                        <span>${message}</span>
+                    </div>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-lg font-bold hover:opacity-75">×</button>
+                </div>
+            `;
+
+            container.appendChild(messageDiv);
+
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (messageDiv.parentElement) {
+                    messageDiv.style.opacity = '0';
+                    messageDiv.style.transform = 'translateX(100%)';
+                    setTimeout(() => messageDiv.remove(), 300);
+                }
+            }, 5000);
+        }
+
+        // Allocate vehicle to user
+        function allocateVehicle(carId) {
+            const userSelect = document.getElementById(`user-select-${carId}`);
+            const userId = userSelect.value;
+
+            if (!userId) {
+                showMessage('Please select a user to allocate the vehicle to', 'error');
+                return;
+            }
+
+            const userName = userSelect.options[userSelect.selectedIndex].text;
+
+            if (!confirm(`Are you sure you want to allocate this vehicle to ${userName}?`)) {
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('car_id', carId);
+            formData.append('user_id', userId);
+
+            fetch('/super-admin/allocate-vehicle', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showMessage(data.message, 'success');
+                    // Reload page to reflect changes
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showMessage(data.message || 'Error allocating vehicle', 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('Error allocating vehicle', 'error');
+                console.error('Error:', error);
+            });
+        }
+
+        // Remove vehicle
+        function removeVehicle(carId, registration) {
+            if (!confirm(`Are you sure you want to permanently remove vehicle "${registration}"? This action cannot be undone and will delete all associated appointments.`)) {
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('car_id', carId);
+
+            fetch('/super-admin/remove-vehicle', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    showMessage(data.message, 'success');
+                    // Reload page to reflect changes
+                    setTimeout(() => location.reload(), 1000);
+                } else {
+                    showMessage(data.message || 'Error removing vehicle', 'error');
+                }
+            })
+            .catch(error => {
+                showMessage('Error removing vehicle', 'error');
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>

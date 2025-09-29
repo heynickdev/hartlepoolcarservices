@@ -7,7 +7,7 @@ CREATE TABLE users (
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
     phone TEXT NOT NULL,
-    is_admin BOOLEAN NOT NULL DEFAULT FALSE,
+    role TEXT NOT NULL DEFAULT 'user',
     email_verified BOOLEAN NOT NULL DEFAULT FALSE,
     email_verification_token TEXT,
     email_verification_expires TIMESTAMPTZ,

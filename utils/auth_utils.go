@@ -20,12 +20,12 @@ func HashPassword(password string) (string, error) {
 	return string(bytes), err
 }
 
-func GenerateJWT(userID uuid.UUID, email string, isAdmin bool) (string, error) {
+func GenerateJWT(userID uuid.UUID, email string, role string) (string, error) {
 	expirationTime := time.Now().Add(24 * time.Hour)
 	claims := &models.Claims{
 		UserID:  userID,
 		Email:   email,
-		IsAdmin: isAdmin,
+		Role:    role,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
@@ -77,4 +77,31 @@ func ValidateJWT(tokenStr string) (*models.Claims, error) {
 	// The blacklist check will be done in the middleware
 	// We avoid the import cycle by not importing database here
 	return claims, nil
+}
+
+// Role constants
+const (
+	RoleUser       = "user"
+	RoleAdmin      = "admin"
+	RoleSuperAdmin = "super_admin"
+)
+
+// IsAdmin checks if the user has admin or super admin role
+func IsAdmin(role string) bool {
+	return role == RoleAdmin || role == RoleSuperAdmin
+}
+
+// IsSuperAdmin checks if the user has super admin role
+func IsSuperAdmin(role string) bool {
+	return role == RoleSuperAdmin
+}
+
+// CanAccessAdmin checks if the user can access admin features
+func CanAccessAdmin(role string) bool {
+	return IsAdmin(role)
+}
+
+// CanAccessSuperAdmin checks if the user can access super admin features
+func CanAccessSuperAdmin(role string) bool {
+	return IsSuperAdmin(role)
 }

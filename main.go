@@ -88,6 +88,24 @@ func main() {
 		handlers.ServeWs(handlers.WsHub, w, r)
 	})))
 
+	// Super Admin routes
+	superAdminRoutes := http.NewServeMux()
+	superAdminRoutes.Handle("/super-admin/dashboard", http.HandlerFunc(handlers.SuperAdminDashboardHandler))
+	superAdminRoutes.Handle("/super-admin/users", http.HandlerFunc(handlers.SuperAdminUsersHandler))
+	superAdminRoutes.Handle("/super-admin/vehicles", http.HandlerFunc(handlers.SuperAdminVehicleManagementHandler))
+	superAdminRoutes.Handle("/super-admin/update-user-role", http.HandlerFunc(handlers.SuperAdminUpdateUserRoleHandler))
+	superAdminRoutes.Handle("/super-admin/delete-user", http.HandlerFunc(handlers.SuperAdminDeleteUserHandler))
+	superAdminRoutes.Handle("/super-admin/activate-user", http.HandlerFunc(handlers.SuperAdminActivateUserHandler))
+	superAdminRoutes.Handle("/super-admin/allocate-vehicle", http.HandlerFunc(handlers.SuperAdminAllocateVehicleHandler))
+	superAdminRoutes.Handle("/super-admin/remove-vehicle", http.HandlerFunc(handlers.SuperAdminRemoveVehicleHandler))
+	superAdminRoutes.Handle("/super-admin/toggle-dashboard", http.HandlerFunc(handlers.SuperAdminToggleDashboardHandler))
+	superAdminRoutes.Handle("/super-admin/view-user", http.HandlerFunc(handlers.SuperAdminViewUserHandler))
+	superAdminRoutes.Handle("/super-admin/add-car-for-user", http.HandlerFunc(handlers.SuperAdminAddCarForUserHandler))
+	superAdminRoutes.Handle("/super-admin/delete-car-for-user", http.HandlerFunc(handlers.SuperAdminDeleteCarForUserHandler))
+	superAdminRoutes.Handle("/api/super-admin/stats", http.HandlerFunc(handlers.SuperAdminSystemStatsHandler))
+	http.Handle("/super-admin/", middleware.AuthMiddleware(middleware.SuperAdminMiddleware(superAdminRoutes)))
+	http.Handle("/api/super-admin/", middleware.AuthMiddleware(middleware.SuperAdminMiddleware(superAdminRoutes)))
+
 	// Admin routes
 	adminRoutes := http.NewServeMux()
 	adminRoutes.Handle("/admin/overview", http.HandlerFunc(handlers.AdminOverviewHandler))

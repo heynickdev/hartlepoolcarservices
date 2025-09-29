@@ -1,0 +1,72 @@
+{{ define "super_admin_nav" }}
+<div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="flex justify-between items-center h-16">
+    <!-- Left side: Logo and title -->
+    <div class="flex items-center space-x-3">
+      <img
+        src="/static/logo.png"
+        alt="Logo"
+        class="h-8 w-auto inline dark:hidden"
+      />
+      <img
+        src="/static/logo-white.png"
+        alt="Logo"
+        class="h-8 w-auto hidden dark:inline"
+      />
+      <span class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white whitespace-nowrap"
+        >Hartlepool Car Services</span
+      >
+    </div>
+
+    <!-- Right side: User info and actions -->
+    <div class="flex items-center space-x-3">
+      <!-- Mobile Menu Button -->
+      <button
+        id="mobile-burger"
+        class="lg:hidden p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
+      >
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+
+      <!-- Super Admin Menu - Desktop -->
+      <div class="hidden lg:flex items-center space-x-3">
+        <!-- User Info -->
+        <div class="flex items-center space-x-2 text-gray-700 dark:text-gray-300 px-2">
+          <i class="fas fa-crown text-lg text-yellow-500"></i>
+          <span class="capitalize text-sm">{{.User.Name}}</span>
+        </div>
+
+        <!-- Dashboard Toggle -->
+        <a
+          href="/super-admin/toggle-dashboard?target=admin"
+          class="flex items-center space-x-1 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 px-2 py-1 rounded-lg text-sm"
+          title="Switch to Admin Dashboard"
+        >
+          <i class="fas fa-user-cog"></i>
+          <span>Admin</span>
+        </a>
+
+        <!-- Home -->
+        <a
+          href="/"
+          class="flex items-center space-x-1 text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-2 py-1 rounded-lg text-sm"
+          title="Go to Home"
+        >
+          <i class="fas fa-home"></i>
+          <span>Home</span>
+        </a>
+
+        <!-- Logout -->
+        <a
+          href="/logout"
+          class="flex items-center space-x-1 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-200 px-2 py-1 rounded-lg text-sm"
+          title="Logout"
+        >
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{{ end }}

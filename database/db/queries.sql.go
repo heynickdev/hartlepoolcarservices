@@ -38,6 +38,20 @@ func (q *Queries) AdminDeleteCar(ctx context.Context, id pgtype.UUID) error {
 	return err
 }
 
+const allocateCarToUser = `-- name: AllocateCarToUser :exec
+UPDATE cars SET user_id = $2 WHERE id = $1
+`
+
+type AllocateCarToUserParams struct {
+	ID     pgtype.UUID `json:"id"`
+	UserID pgtype.UUID `json:"user_id"`
+}
+
+func (q *Queries) AllocateCarToUser(ctx context.Context, arg AllocateCarToUserParams) error {
+	_, err := q.db.Exec(ctx, allocateCarToUser, arg.ID, arg.UserID)
+	return err
+}
+
 const blacklistAllUserTokens = `-- name: BlacklistAllUserTokens :exec
 INSERT INTO token_blacklist (token_hash, user_id, reason, expires_at)
 SELECT
@@ -99,6 +113,35 @@ UPDATE users SET email = pending_email, pending_email = NULL, email_change_token
 func (q *Queries) ConfirmEmailChange(ctx context.Context, id pgtype.UUID) error {
 	_, err := q.db.Exec(ctx, confirmEmailChange, id)
 	return err
+}
+
+const countUsersByRole = `-- name: CountUsersByRole :many
+SELECT role, COUNT(*) as count FROM users GROUP BY role
+`
+
+type CountUsersByRoleRow struct {
+	Role  string `json:"role"`
+	Count int64  `json:"count"`
+}
+
+func (q *Queries) CountUsersByRole(ctx context.Context) ([]CountUsersByRoleRow, error) {
+	rows, err := q.db.Query(ctx, countUsersByRole)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []CountUsersByRoleRow
+	for rows.Next() {
+		var i CountUsersByRoleRow
+		if err := rows.Scan(&i.Role, &i.Count); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const createAppointment = `-- name: CreateAppointment :one
@@ -257,9 +300,9 @@ func (q *Queries) CreateCar(ctx context.Context, arg CreateCarParams) (Car, erro
 }
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO users (name, email, password_hash, phone, is_admin, email_verification_token, email_verification_expires)
+INSERT INTO users (name, email, password_hash, phone, role, email_verification_token, email_verification_expires)
 VALUES ($1, $2, $3, $4, $5, $6, $7)
-RETURNING id, name, email, password_hash, phone, is_admin, email_verified, email_verification_token, email_verification_expires, password_reset_token, password_reset_expires, pending_email, email_change_token, email_change_expires, created_at
+RETURNING id, name, email, password_hash, phone, role, email_verified, email_verification_token, email_verification_expires, password_reset_token, password_reset_expires, pending_email, email_change_token, email_change_expires, created_at
 `
 
 type CreateUserParams struct {
@@ -267,7 +310,7 @@ type CreateUserParams struct {
 	Email                    string             `json:"email"`
 	PasswordHash             string             `json:"password_hash"`
 	Phone                    string             `json:"phone"`
-	IsAdmin                  bool               `json:"is_admin"`
+	Role                     string             `json:"role"`
 	EmailVerificationToken   pgtype.Text        `json:"email_verification_token"`
 	EmailVerificationExpires pgtype.Timestamptz `json:"email_verification_expires"`
 }
@@ -278,7 +321,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		arg.Email,
 		arg.PasswordHash,
 		arg.Phone,
-		arg.IsAdmin,
+		arg.Role,
 		arg.EmailVerificationToken,
 		arg.EmailVerificationExpires,
 	)
@@ -289,7 +332,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.Email,
 		&i.PasswordHash,
 		&i.Phone,
-		&i.IsAdmin,
+		&i.Role,
 		&i.EmailVerified,
 		&i.EmailVerificationToken,
 		&i.EmailVerificationExpires,
@@ -323,6 +366,15 @@ DELETE FROM users WHERE email = $1
 
 func (q *Queries) DeleteUserByEmail(ctx context.Context, email string) error {
 	_, err := q.db.Exec(ctx, deleteUserByEmail, email)
+	return err
+}
+
+const deleteUserByID = `-- name: DeleteUserByID :exec
+DELETE FROM users WHERE id = $1
+`
+
+func (q *Queries) DeleteUserByID(ctx context.Context, id pgtype.UUID) error {
+	_, err := q.db.Exec(ctx, deleteUserByID, id)
 	return err
 }
 
@@ -569,7 +621,7 @@ func (q *Queries) GetAllCarsWithUsers(ctx context.Context) ([]GetAllCarsWithUser
 }
 
 const getAllUsers = `-- name: GetAllUsers :many
-SELECT id, name, email, password_hash, phone, is_admin, email_verified, email_verification_token, email_verification_expires, password_reset_token, password_reset_expires, pending_email, email_change_token, email_change_expires, created_at FROM users ORDER BY name
+SELECT id, name, email, password_hash, phone, role, email_verified, email_verification_token, email_verification_expires, password_reset_token, password_reset_expires, pending_email, email_change_token, email_change_expires, created_at FROM users ORDER BY name
 `
 
 func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
@@ -587,7 +639,7 @@ func (q *Queries) GetAllUsers(ctx context.Context) ([]User, error) {
 			&i.Email,
 			&i.PasswordHash,
 			&i.Phone,
-			&i.IsAdmin,
+			&i.Role,
 			&i.EmailVerified,
 			&i.EmailVerificationToken,
 			&i.EmailVerificationExpires,
@@ -872,8 +924,60 @@ func (q *Queries) GetNextAppointmentForCar(ctx context.Context, carID pgtype.UUI
 	return i, err
 }
 
+const getUnallocatedCars = `-- name: GetUnallocatedCars :many
+SELECT id, user_id, registration_number, make, colour, fuel_type, engine_capacity, year_of_manufacture, month_of_first_registration, month_of_first_dvla_registration, tax_status, tax_due_date, mot_status, mot_expiry_date, co2_emissions, euro_status, real_driving_emissions, revenue_weight, type_approval, wheelplan, automated_vehicle, marked_for_export, date_of_last_v5c_issued, art_end_date, dvla_data_fetched_at, created_at, updated_at FROM cars WHERE user_id IS NULL ORDER BY created_at DESC
+`
+
+func (q *Queries) GetUnallocatedCars(ctx context.Context) ([]Car, error) {
+	rows, err := q.db.Query(ctx, getUnallocatedCars)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Car
+	for rows.Next() {
+		var i Car
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.RegistrationNumber,
+			&i.Make,
+			&i.Colour,
+			&i.FuelType,
+			&i.EngineCapacity,
+			&i.YearOfManufacture,
+			&i.MonthOfFirstRegistration,
+			&i.MonthOfFirstDvlaRegistration,
+			&i.TaxStatus,
+			&i.TaxDueDate,
+			&i.MotStatus,
+			&i.MotExpiryDate,
+			&i.Co2Emissions,
+			&i.EuroStatus,
+			&i.RealDrivingEmissions,
+			&i.RevenueWeight,
+			&i.TypeApproval,
+			&i.Wheelplan,
+			&i.AutomatedVehicle,
+			&i.MarkedForExport,
+			&i.DateOfLastV5cIssued,
+			&i.ArtEndDate,
+			&i.DvlaDataFetchedAt,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getUserByEmail = `-- name: GetUserByEmail :one
-SELECT id, name, email, password_hash, phone, is_admin, email_verified, email_verification_token, email_verification_expires, password_reset_token, password_reset_expires, pending_email, email_change_token, email_change_expires, created_at FROM users WHERE email = $1
+SELECT id, name, email, password_hash, phone, role, email_verified, email_verification_token, email_verification_expires, password_reset_token, password_reset_expires, pending_email, email_change_token, email_change_expires, created_at FROM users WHERE email = $1
 `
 
 func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error) {
@@ -885,7 +989,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 		&i.Email,
 		&i.PasswordHash,
 		&i.Phone,
-		&i.IsAdmin,
+		&i.Role,
 		&i.EmailVerified,
 		&i.EmailVerificationToken,
 		&i.EmailVerificationExpires,
@@ -900,7 +1004,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (User, error
 }
 
 const getUserByEmailChangeToken = `-- name: GetUserByEmailChangeToken :one
-SELECT id, name, email, password_hash, phone, is_admin, email_verified, email_verification_token, email_verification_expires, password_reset_token, password_reset_expires, pending_email, email_change_token, email_change_expires, created_at FROM users WHERE email_change_token = $1 AND email_change_expires > NOW()
+SELECT id, name, email, password_hash, phone, role, email_verified, email_verification_token, email_verification_expires, password_reset_token, password_reset_expires, pending_email, email_change_token, email_change_expires, created_at FROM users WHERE email_change_token = $1 AND email_change_expires > NOW()
 `
 
 func (q *Queries) GetUserByEmailChangeToken(ctx context.Context, emailChangeToken pgtype.Text) (User, error) {
@@ -912,7 +1016,7 @@ func (q *Queries) GetUserByEmailChangeToken(ctx context.Context, emailChangeToke
 		&i.Email,
 		&i.PasswordHash,
 		&i.Phone,
-		&i.IsAdmin,
+		&i.Role,
 		&i.EmailVerified,
 		&i.EmailVerificationToken,
 		&i.EmailVerificationExpires,
@@ -927,7 +1031,7 @@ func (q *Queries) GetUserByEmailChangeToken(ctx context.Context, emailChangeToke
 }
 
 const getUserByID = `-- name: GetUserByID :one
-SELECT id, name, email, password_hash, phone, is_admin, email_verified, email_verification_token, email_verification_expires, password_reset_token, password_reset_expires, pending_email, email_change_token, email_change_expires, created_at FROM users WHERE id = $1
+SELECT id, name, email, password_hash, phone, role, email_verified, email_verification_token, email_verification_expires, password_reset_token, password_reset_expires, pending_email, email_change_token, email_change_expires, created_at FROM users WHERE id = $1
 `
 
 func (q *Queries) GetUserByID(ctx context.Context, id pgtype.UUID) (User, error) {
@@ -939,7 +1043,7 @@ func (q *Queries) GetUserByID(ctx context.Context, id pgtype.UUID) (User, error)
 		&i.Email,
 		&i.PasswordHash,
 		&i.Phone,
-		&i.IsAdmin,
+		&i.Role,
 		&i.EmailVerified,
 		&i.EmailVerificationToken,
 		&i.EmailVerificationExpires,
@@ -954,7 +1058,7 @@ func (q *Queries) GetUserByID(ctx context.Context, id pgtype.UUID) (User, error)
 }
 
 const getUserByPasswordResetToken = `-- name: GetUserByPasswordResetToken :one
-SELECT id, name, email, password_hash, phone, is_admin, email_verified, email_verification_token, email_verification_expires, password_reset_token, password_reset_expires, pending_email, email_change_token, email_change_expires, created_at FROM users WHERE password_reset_token = $1 AND password_reset_expires > NOW()
+SELECT id, name, email, password_hash, phone, role, email_verified, email_verification_token, email_verification_expires, password_reset_token, password_reset_expires, pending_email, email_change_token, email_change_expires, created_at FROM users WHERE password_reset_token = $1 AND password_reset_expires > NOW()
 `
 
 func (q *Queries) GetUserByPasswordResetToken(ctx context.Context, passwordResetToken pgtype.Text) (User, error) {
@@ -966,7 +1070,7 @@ func (q *Queries) GetUserByPasswordResetToken(ctx context.Context, passwordReset
 		&i.Email,
 		&i.PasswordHash,
 		&i.Phone,
-		&i.IsAdmin,
+		&i.Role,
 		&i.EmailVerified,
 		&i.EmailVerificationToken,
 		&i.EmailVerificationExpires,
@@ -981,7 +1085,7 @@ func (q *Queries) GetUserByPasswordResetToken(ctx context.Context, passwordReset
 }
 
 const getUserByVerificationToken = `-- name: GetUserByVerificationToken :one
-SELECT id, name, email, password_hash, phone, is_admin, email_verified, email_verification_token, email_verification_expires, password_reset_token, password_reset_expires, pending_email, email_change_token, email_change_expires, created_at FROM users WHERE email_verification_token = $1 AND email_verification_expires > NOW()
+SELECT id, name, email, password_hash, phone, role, email_verified, email_verification_token, email_verification_expires, password_reset_token, password_reset_expires, pending_email, email_change_token, email_change_expires, created_at FROM users WHERE email_verification_token = $1 AND email_verification_expires > NOW()
 `
 
 func (q *Queries) GetUserByVerificationToken(ctx context.Context, emailVerificationToken pgtype.Text) (User, error) {
@@ -993,7 +1097,7 @@ func (q *Queries) GetUserByVerificationToken(ctx context.Context, emailVerificat
 		&i.Email,
 		&i.PasswordHash,
 		&i.Phone,
-		&i.IsAdmin,
+		&i.Role,
 		&i.EmailVerified,
 		&i.EmailVerificationToken,
 		&i.EmailVerificationExpires,
@@ -1005,6 +1109,46 @@ func (q *Queries) GetUserByVerificationToken(ctx context.Context, emailVerificat
 		&i.CreatedAt,
 	)
 	return i, err
+}
+
+const getUsersByRole = `-- name: GetUsersByRole :many
+SELECT id, name, email, password_hash, phone, role, email_verified, email_verification_token, email_verification_expires, password_reset_token, password_reset_expires, pending_email, email_change_token, email_change_expires, created_at FROM users WHERE role = $1 ORDER BY created_at DESC
+`
+
+func (q *Queries) GetUsersByRole(ctx context.Context, role string) ([]User, error) {
+	rows, err := q.db.Query(ctx, getUsersByRole, role)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []User
+	for rows.Next() {
+		var i User
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Email,
+			&i.PasswordHash,
+			&i.Phone,
+			&i.Role,
+			&i.EmailVerified,
+			&i.EmailVerificationToken,
+			&i.EmailVerificationExpires,
+			&i.PasswordResetToken,
+			&i.PasswordResetExpires,
+			&i.PendingEmail,
+			&i.EmailChangeToken,
+			&i.EmailChangeExpires,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const isTokenBlacklisted = `-- name: IsTokenBlacklisted :one
@@ -1019,14 +1163,14 @@ func (q *Queries) IsTokenBlacklisted(ctx context.Context, tokenHash string) (boo
 }
 
 const listAllUsers = `-- name: ListAllUsers :many
-SELECT id, name, email, is_admin, email_verified, created_at FROM users ORDER BY created_at DESC
+SELECT id, name, email, role, email_verified, created_at FROM users ORDER BY created_at DESC
 `
 
 type ListAllUsersRow struct {
 	ID            pgtype.UUID        `json:"id"`
 	Name          string             `json:"name"`
 	Email         string             `json:"email"`
-	IsAdmin       bool               `json:"is_admin"`
+	Role          string             `json:"role"`
 	EmailVerified bool               `json:"email_verified"`
 	CreatedAt     pgtype.Timestamptz `json:"created_at"`
 }
@@ -1044,7 +1188,7 @@ func (q *Queries) ListAllUsers(ctx context.Context) ([]ListAllUsersRow, error) {
 			&i.ID,
 			&i.Name,
 			&i.Email,
-			&i.IsAdmin,
+			&i.Role,
 			&i.EmailVerified,
 			&i.CreatedAt,
 		); err != nil {
@@ -1056,24 +1200,6 @@ func (q *Queries) ListAllUsers(ctx context.Context) ([]ListAllUsersRow, error) {
 		return nil, err
 	}
 	return items, nil
-}
-
-const makeUserAdmin = `-- name: MakeUserAdmin :exec
-UPDATE users SET is_admin = TRUE WHERE email = $1
-`
-
-func (q *Queries) MakeUserAdmin(ctx context.Context, email string) error {
-	_, err := q.db.Exec(ctx, makeUserAdmin, email)
-	return err
-}
-
-const removeUserAdmin = `-- name: RemoveUserAdmin :exec
-UPDATE users SET is_admin = FALSE WHERE email = $1
-`
-
-func (q *Queries) RemoveUserAdmin(ctx context.Context, email string) error {
-	_, err := q.db.Exec(ctx, removeUserAdmin, email)
-	return err
 }
 
 const resetPassword = `-- name: ResetPassword :exec
@@ -1294,6 +1420,34 @@ type UpdateUserPasswordParams struct {
 
 func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error {
 	_, err := q.db.Exec(ctx, updateUserPassword, arg.ID, arg.PasswordHash)
+	return err
+}
+
+const updateUserRole = `-- name: UpdateUserRole :exec
+UPDATE users SET role = $2 WHERE email = $1
+`
+
+type UpdateUserRoleParams struct {
+	Email string `json:"email"`
+	Role  string `json:"role"`
+}
+
+func (q *Queries) UpdateUserRole(ctx context.Context, arg UpdateUserRoleParams) error {
+	_, err := q.db.Exec(ctx, updateUserRole, arg.Email, arg.Role)
+	return err
+}
+
+const updateUserRoleByID = `-- name: UpdateUserRoleByID :exec
+UPDATE users SET role = $2 WHERE id = $1
+`
+
+type UpdateUserRoleByIDParams struct {
+	ID   pgtype.UUID `json:"id"`
+	Role string      `json:"role"`
+}
+
+func (q *Queries) UpdateUserRoleByID(ctx context.Context, arg UpdateUserRoleByIDParams) error {
+	_, err := q.db.Exec(ctx, updateUserRoleByID, arg.ID, arg.Role)
 	return err
 }
 

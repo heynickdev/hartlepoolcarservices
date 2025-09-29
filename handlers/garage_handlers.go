@@ -5,6 +5,7 @@ import (
 	"hcs-full/database"
 	"hcs-full/database/db"
 	"hcs-full/models"
+	"hcs-full/utils"
 	"log"
 	"net/http"
 	"time"
@@ -50,8 +51,11 @@ func DashboardHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Redirect admins to admin dashboard
-	if claims.IsAdmin {
+	// Redirect admins to appropriate dashboard
+	if utils.IsSuperAdmin(claims.Role) {
+		http.Redirect(w, r, "/super-admin/dashboard", http.StatusSeeOther)
+		return
+	} else if utils.IsAdmin(claims.Role) {
 		http.Redirect(w, r, "/admin/dashboard", http.StatusSeeOther)
 		return
 	}

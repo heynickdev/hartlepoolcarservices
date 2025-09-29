@@ -11,6 +11,7 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"strings"
 
 	"github.com/jackc/pgx/v5/pgtype"
 )
@@ -23,6 +24,12 @@ var funcMap = template.FuncMap{
 			return "", err
 		}
 		return template.JS(a), nil
+	},
+	"lower": func(s string) string {
+		return strings.ToLower(s)
+	},
+	"contains": func(s, substr string) bool {
+		return strings.Contains(s, substr)
 	},
 }
 

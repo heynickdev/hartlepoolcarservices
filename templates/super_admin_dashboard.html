@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}} | Hartlepool Car Services</title>
+
+    <!-- Preconnect to external domains for faster loading -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+
+    <link rel="stylesheet" href="/static/css/output.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/static/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/static/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="/static/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="HCS" />
+    <link rel="manifest" href="/static/favicon/site.webmanifest" />
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        {{ template "super_admin_nav" . }}
+    </nav>
+
+    <div class="lg:flex">
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu-overlay" class="hidden fixed inset-0 z-50 lg:hidden" style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);">
+            <div class="fixed inset-y-0 left-0 flex flex-col w-full max-w-xs bg-white dark:bg-gray-800">
+                <!-- Close button -->
+                <div class="absolute top-0 right-0 -mr-12 pt-2">
+                    <button id="mobile-menu-close" class="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
+                        <i class="fas fa-times text-white text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Menu header -->
+                <div class="flex items-center flex-shrink-0 px-4 py-4 border-b border-gray-200 dark:border-gray-700">
+                    <img src="/static/logo.png" alt="Logo" class="h-8 w-auto dark:hidden inline">
+                    <img src="/static/logo-white.png" alt="Logo" class="h-8 w-auto dark:inline hidden">
+                    <span class="ml-3 font-semibold text-gray-900 dark:text-white">Super Admin</span>
+                </div>
+
+                <!-- Menu items -->
+                <nav class="mt-5 flex-1 px-4 space-y-1">
+                    <a href="/super-admin/dashboard" class="flex items-center space-x-3 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/50 px-4 py-3 rounded-lg text-base font-medium">
+                        <i class="fas fa-crown text-xl"></i>
+                        <span>Super Dashboard</span>
+                    </a>
+                    <a href="/super-admin/users" class="flex items-center space-x-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-3 rounded-lg text-base font-medium">
+                        <i class="fas fa-users text-xl"></i>
+                        <span>User Management</span>
+                    </a>
+                    <a href="/super-admin/vehicles" class="flex items-center space-x-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-3 rounded-lg text-base font-medium">
+                        <i class="fas fa-car text-xl"></i>
+                        <span>Vehicle Management</span>
+                    </a>
+
+                    <!-- View Toggles -->
+                    <div class="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
+                        <p class="px-4 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Switch View</p>
+                        <a href="/super-admin/toggle-dashboard?target=admin" class="flex items-center space-x-3 text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-200 hover:bg-blue-50 dark:hover:bg-blue-900/50 px-4 py-3 rounded-lg text-base font-medium">
+                            <i class="fas fa-user-cog text-xl"></i>
+                            <span>Admin View</span>
+                        </a>
+                        <a href="/dashboard" class="flex items-center space-x-3 text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-200 hover:bg-green-50 dark:hover:bg-green-900/50 px-4 py-3 rounded-lg text-base font-medium">
+                            <i class="fas fa-user text-xl"></i>
+                            <span>My Dashboard</span>
+                        </a>
+                    </div>
+                </nav>
+
+                <!-- User info and logout at bottom -->
+                <div class="flex-shrink-0 border-t border-gray-200 dark:border-gray-700 p-4 space-y-2">
+                    <div class="flex items-center space-x-3 px-2">
+                        <i class="fas fa-crown text-xl text-yellow-500"></i>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700 dark:text-gray-300 capitalize">{{.User.Name}}</p>
+                            <p class="text-xs font-medium text-yellow-600 dark:text-yellow-400">Super Admin</p>
+                        </div>
+                    </div>
+                    <a href="/logout" class="flex items-center space-x-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/50 px-4 py-3 rounded-lg text-base font-medium w-full">
+                        <i class="fas fa-sign-out-alt text-xl"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="hidden lg:block w-64 min-h-screen bg-white dark:bg-gray-800 shadow-sm border-r border-gray-200 dark:border-gray-700 pt-4">
+            <div class="p-4 flex flex-col h-full">
+                <nav class="space-y-2">
+                    <a href="/super-admin/dashboard" class="flex items-center space-x-3 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/50 px-4 py-2 rounded-lg">
+                        <i class="fas fa-crown"></i>
+                        <span>Super Dashboard</span>
+                    </a>
+                    <a href="/super-admin/users" class="flex items-center space-x-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-2 rounded-lg">
+                        <i class="fas fa-users"></i>
+                        <span>User Management</span>
+                    </a>
+                    <a href="/super-admin/vehicles" class="flex items-center space-x-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 px-4 py-2 rounded-lg">
+                        <i class="fas fa-car"></i>
+                        <span>Vehicle Management</span>
+                    </a>
+
+                    <!-- View Toggles Section -->
+                    <div class="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
+                        <p class="px-4 text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Switch View</p>
+                        <a href="/super-admin/toggle-dashboard?target=admin" class="flex items-center space-x-3 text-blue-600 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-200 hover:bg-blue-50 dark:hover:bg-blue-900/50 px-4 py-2 rounded-lg">
+                            <i class="fas fa-user-cog"></i>
+                            <span>Admin View</span>
+                        </a>
+                        <a href="/dashboard" class="flex items-center space-x-3 text-green-600 dark:text-green-400 hover:text-green-900 dark:hover:text-green-200 hover:bg-green-50 dark:hover:bg-green-900/50 px-4 py-2 rounded-lg">
+                            <i class="fas fa-user"></i>
+                            <span>My Dashboard</span>
+                        </a>
+                    </div>
+                </nav>
+
+                <!-- User info and logout at bottom -->
+                <div class="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700 space-y-2">
+                    <div class="flex items-center space-x-3 px-4 py-2 text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-crown text-xl text-yellow-500"></i>
+                        <div>
+                            <p class="text-sm font-medium capitalize">{{.User.Name}}</p>
+                            <p class="text-xs text-yellow-600 dark:text-yellow-400">Super Admin</p>
+                        </div>
+                    </div>
+                    <a href="/logout" class="flex items-center space-x-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/50 px-4 py-2 rounded-lg text-sm font-medium w-full">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 lg:pl-0">
+            <main class="p-6">
+                <!-- Page Header -->
+                <div class="mb-8">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">System Overview</h1>
+                            <p class="mt-2 text-gray-600 dark:text-gray-400">Complete system administration and monitoring</p>
+                        </div>
+                        <button id="mobile-burger" class="lg:hidden p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Statistics Grid -->
+                <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+                    <!-- Total Users -->
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
+                                        <i class="fas fa-users text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Users</dt>
+                                        <dd class="text-lg font-medium text-gray-900 dark:text-white">{{.TotalUsers}}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Appointments -->
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
+                                        <i class="fas fa-calendar-check text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Appointments</dt>
+                                        <dd class="text-lg font-medium text-gray-900 dark:text-white">{{.TotalAppointments}}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Vehicles -->
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
+                                        <i class="fas fa-car text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Vehicles</dt>
+                                        <dd class="text-lg font-medium text-gray-900 dark:text-white">{{.TotalCars}}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pending Appointments -->
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0">
+                                    <div class="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
+                                        <i class="fas fa-clock text-white"></i>
+                                    </div>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Pending</dt>
+                                        <dd class="text-lg font-medium text-gray-900 dark:text-white">{{.PendingAppointments}}</dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Role Distribution and Quick Actions -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- Role Distribution -->
+                    <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
+                        <div class="px-4 py-5 sm:p-6">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">User Role Distribution</h3>
+                            <div class="mt-5 space-y-4">
+                                {{range $role, $count := .RoleStats}}
+                                <div class="flex justify-between items-center">
+                                    <div class="flex items-center">
+                                        {{if eq $role "super_admin"}}
+                                        <i class="fas fa-crown text-yellow-500 mr-2"></i>
+                                        <span class="text-gray-700 dark:text-gray-300">Super Admins</span>
+                                        {{else if eq $role "admin"}}
+                                        <i class="fas fa-user-shield text-blue-500 mr-2"></i>
+                                        <span class="text-gray-700 dark:text-gray-300">Admins</span>
+                                        {{else}}
+                                        <i class="fas fa-user text-gray-500 mr-2"></i>
+                                        <span class="text-gray-700 dark:text-gray-300">Users</span>
+                                        {{end}}
+                                    </div>
+                                    <span class="text-lg font-semibold text-gray-900 dark:text-white">{{$count}}</span>
+                                </div>
+                                {{end}}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
+                        <div class="px-4 py-5 sm:p-6">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Quick Actions</h3>
+                            <div class="mt-5 space-y-3">
+                                <a href="/super-admin/users" class="block p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/40 transition">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-users text-blue-600 dark:text-blue-400 mr-3"></i>
+                                        <span class="text-blue-700 dark:text-blue-300 font-medium">Manage Users</span>
+                                    </div>
+                                </a>
+                                <a href="/super-admin/vehicles" class="block p-3 bg-green-50 dark:bg-green-900/20 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/40 transition">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-car text-green-600 dark:text-green-400 mr-3"></i>
+                                        <span class="text-green-700 dark:text-green-300 font-medium">Manage Vehicles</span>
+                                    </div>
+                                </a>
+                                <a href="/admin/dashboard" class="block p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/40 transition">
+                                    <div class="flex items-center">
+                                        <i class="fas fa-user-cog text-purple-600 dark:text-purple-400 mr-3"></i>
+                                        <span class="text-purple-700 dark:text-purple-300 font-medium">Switch to Admin View</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Appointments Table -->
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
+                    <div class="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Recent Appointments</h3>
+                        <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">Latest appointments across all users</p>
+                    </div>
+                    <div class="overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                <thead class="bg-gray-50 dark:bg-gray-700">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">User</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Vehicle</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                                    {{range $index, $appointment := .AllAppointments}}
+                                    {{if lt $index 10}}
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="flex items-center">
+                                                <div class="ml-0">
+                                                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{$appointment.UserName}}</div>
+                                                    <div class="text-sm text-gray-500 dark:text-gray-400">{{$appointment.UserEmail}}</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900 dark:text-white">{{$appointment.CarRegistration}}</div>
+                                            <div class="text-sm text-gray-500 dark:text-gray-400">{{$appointment.CarMake}}</div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                            {{$appointment.Datetime.Time.Format "2006-01-02 15:04"}}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
+                                                {{if eq $appointment.Status "confirmed"}}bg-green-100 text-green-800 dark:bg-green-700 dark:text-green-100{{end}}
+                                                {{if eq $appointment.Status "pending"}}bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-yellow-100{{end}}
+                                                {{if eq $appointment.Status "cancelled"}}bg-red-100 text-red-800 dark:bg-red-700 dark:text-red-100{{end}}
+                                                {{if eq $appointment.Status "completed"}}bg-blue-100 text-blue-800 dark:bg-blue-700 dark:text-blue-100{{end}}">
+                                                {{$appointment.Status}}
+                                            </span>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <a href="/admin/dashboard" class="text-primary-600 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-200">View Details</a>
+                                        </td>
+                                    </tr>
+                                    {{end}}
+                                    {{end}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile menu toggle script -->
+    <script>
+        // Mobile menu toggle
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+        const mobileMenuOpen = document.getElementById('mobile-burger');
+        const mobileMenuClose = document.getElementById('mobile-menu-close');
+
+        mobileMenuOpen?.addEventListener('click', () => {
+            mobileMenuOverlay?.classList.remove('hidden');
+        });
+
+        mobileMenuClose?.addEventListener('click', () => {
+            mobileMenuOverlay?.classList.add('hidden');
+        });
+
+        // Close on overlay click
+        mobileMenuOverlay?.addEventListener('click', (e) => {
+            if (e.target === mobileMenuOverlay) {
+                mobileMenuOverlay.classList.add('hidden');
+            }
+        });
+
+    </script>
+</body>
+</html>

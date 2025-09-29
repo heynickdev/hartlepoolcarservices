@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"hcs-full/models"
+	"hcs-full/utils"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
@@ -140,7 +141,7 @@ func ServeWs(hub *Hub, w http.ResponseWriter, r *http.Request) {
 	}
 
 	var clientUserID uuid.UUID
-	if !claims.IsAdmin {
+	if !utils.IsAdmin(claims.Role) {
 		clientUserID = claims.UserID
 	}
 

@@ -11,7 +11,7 @@ import (
 type Claims struct {
 	UserID  uuid.UUID `json:"user_id"`
 	Email   string    `json:"email"`
-	IsAdmin bool      `json:"is_admin"`
+	Role   string    `json:"role"`
 	jwt.RegisteredClaims
 }
 
@@ -21,6 +21,7 @@ type PageData struct {
 	User                  *db.User
 	UserCars              []db.Car
 	AllCars               []db.GetAllCarsWithUsersRow
+	AllUsers              []db.User
 	SelectedCar           *db.Car
 	VehicleOwner          *db.User
 	CarAppointments       []db.Appointment
@@ -33,12 +34,14 @@ type PageData struct {
 	Token                 string
 	TotalCars             int
 	TotalAppointments     int
+	TotalUsers            int
 	AcceptedAppointments  int
 	PendingAppointments   int
 	CancelledAppointments int
 	Calendar              CalendarData
 	ChartData             ChartData
 	CarsByUser            map[uuid.UUID]UserCarSummary
+	RoleStats             map[string]int
 	MetaDescription       string
 	CanonicalURL          string
 }

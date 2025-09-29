@@ -59,7 +59,7 @@ func SignupHandler(w http.ResponseWriter, r *http.Request) {
 			Email:                    email,
 			PasswordHash:             hashedPassword,
 			Phone:                    phone,
-			IsAdmin:                  false,
+			Role:                     utils.RoleUser,
 			EmailVerificationToken:   pgtype.Text{String: verificationToken, Valid: true},
 			EmailVerificationExpires: pgtype.Timestamptz{Time: expiresAt, Valid: true},
 		}
@@ -113,7 +113,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		token, err := utils.GenerateJWT(user.ID.Bytes, user.Email, user.IsAdmin)
+		token, err := utils.GenerateJWT(user.ID.Bytes, user.Email, user.Role)
 		if err != nil {
 			http.Error(w, "Could not generate token", http.StatusInternalServerError)
 			return
@@ -128,7 +128,9 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 			SameSite: http.SameSiteStrictMode,
 		})
 
-		if user.IsAdmin {
+		if utils.IsSuperAdmin(user.Role) {
+			http.Redirect(w, r, "/super-admin/dashboard", http.StatusSeeOther)
+		} else if utils.IsAdmin(user.Role) {
 			http.Redirect(w, r, "/admin/dashboard", http.StatusSeeOther)
 		} else {
 			http.Redirect(w, r, "/dashboard", http.StatusSeeOther)

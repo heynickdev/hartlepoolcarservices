@@ -1,5 +1,5 @@
 -- name: CreateUser :one
-INSERT INTO users (name, email, password_hash, phone, is_admin, email_verification_token, email_verification_expires)
+INSERT INTO users (name, email, password_hash, phone, role, email_verification_token, email_verification_expires)
 VALUES ($1, $2, $3, $4, $5, $6, $7)
 RETURNING *;
 
@@ -218,21 +218,36 @@ WHERE NOT EXISTS (
 DELETE FROM token_blacklist WHERE expires_at <= NOW();
 
 -- name: ListAllUsers :many
-SELECT id, name, email, is_admin, email_verified, created_at FROM users ORDER BY created_at DESC;
+SELECT id, name, email, role, email_verified, created_at FROM users ORDER BY created_at DESC;
 
 -- name: SetEmailVerificationToken :exec
 UPDATE users SET email_verification_token = $2, email_verification_expires = $3 WHERE id = $1;
 
--- name: MakeUserAdmin :exec
-UPDATE users SET is_admin = TRUE WHERE email = $1;
+-- name: UpdateUserRole :exec
+UPDATE users SET role = $2 WHERE email = $1;
 
--- name: RemoveUserAdmin :exec
-UPDATE users SET is_admin = FALSE WHERE email = $1;
+-- name: UpdateUserRoleByID :exec
+UPDATE users SET role = $2 WHERE id = $1;
 
 -- name: ActivateUserByEmail :exec
 UPDATE users SET email_verified = TRUE WHERE email = $1;
 
 -- name: DeleteUserByEmail :exec
 DELETE FROM users WHERE email = $1;
+
+-- name: DeleteUserByID :exec
+DELETE FROM users WHERE id = $1;
+
+-- name: GetUsersByRole :many
+SELECT * FROM users WHERE role = $1 ORDER BY created_at DESC;
+
+-- name: CountUsersByRole :many
+SELECT role, COUNT(*) as count FROM users GROUP BY role;
+
+-- name: AllocateCarToUser :exec
+UPDATE cars SET user_id = $2 WHERE id = $1;
+
+-- name: GetUnallocatedCars :many
+SELECT * FROM cars WHERE user_id IS NULL ORDER BY created_at DESC;
 
 

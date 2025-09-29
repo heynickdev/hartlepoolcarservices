@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Title}} | Hartlepool Car Services</title>
+
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="stylesheet" href="/static/css/output.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/static/favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="/static/favicon/favicon.svg" />
+    <link rel="shortcut icon" href="/static/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-title" content="HCS" />
+    <link rel="manifest" href="/static/favicon/site.webmanifest" />
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+    <!-- Navigation -->
+    <nav class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
+        {{ template "super_admin_nav" . }}
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <div class="mb-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{.User.Name}}'s Account</h1>
+                    <p class="mt-2 text-gray-600 dark:text-gray-400">{{.User.Email}}</p>
+                </div>
+                <a href="/super-admin/users" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Users
+                </a>
+            </div>
+        </div>
+
+        <!-- Success/Error Messages -->
+        {{if .Success}}
+        <div class="mb-6 bg-green-100 border border-green-400 text-green-700 dark:bg-green-800/90 dark:border-green-600 dark:text-green-100 px-4 py-3 rounded relative">
+            <span class="block sm:inline">{{.Success}}</span>
+        </div>
+        {{end}}
+        {{if .Error}}
+        <div class="mb-6 bg-red-100 border border-red-400 text-red-700 dark:bg-red-800/90 dark:border-red-600 dark:text-red-100 px-4 py-3 rounded relative">
+            <span class="block sm:inline">{{.Error}}</span>
+        </div>
+        {{end}}
+
+        <!-- Add Vehicle Form -->
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg p-6 mb-8">
+            <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Add Vehicle for User</h2>
+            <form method="POST" action="/super-admin/add-car-for-user" class="flex gap-4">
+                <input type="hidden" name="user_id" value="{{.User.ID.Bytes | printf "%x"}}">
+                <input
+                    type="text"
+                    name="registrationNumber"
+                    placeholder="Registration Number (e.g., AB12 CDE)"
+                    required
+                    class="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 dark:bg-gray-700 dark:text-white"
+                >
+                <button type="submit" class="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg transition-colors">
+                    <i class="fas fa-plus mr-2"></i>Add Vehicle
+                </button>
+            </form>
+        </div>
+
+        <!-- Vehicles List -->
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Vehicles ({{len .UserCars}})</h2>
+            </div>
+
+            {{if .UserCars}}
+            <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                {{range .UserCars}}
+                <div class="p-6 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-4">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-primary-100 dark:bg-primary-900 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-car text-primary-600 dark:text-primary-400 text-xl"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{.RegistrationNumber}}</h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-400">
+                                    {{if .Make.Valid}}{{.Make.String}}{{else}}Unknown Make{{end}}
+                                    {{if .Colour.Valid}}• {{.Colour.String}}{{end}}
+                                    {{if .YearOfManufacture.Valid}}• {{.YearOfManufacture.Int32}}{{end}}
+                                </p>
+                                <div class="flex gap-2 mt-2">
+                                    {{if .TaxStatus.Valid}}
+                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium
+                                        {{if eq .TaxStatus.String "Taxed"}}bg-green-100 text-green-800 dark:bg-green-700 dark:text-green-100{{else}}bg-red-100 text-red-800 dark:bg-red-700 dark:text-red-100{{end}}">
+                                        Tax: {{.TaxStatus.String}}
+                                    </span>
+                                    {{end}}
+                                    {{if .MotStatus.Valid}}
+                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium
+                                        {{if eq .MotStatus.String "Valid"}}bg-green-100 text-green-800 dark:bg-green-700 dark:text-green-100{{else}}bg-red-100 text-red-800 dark:bg-red-700 dark:text-red-100{{end}}">
+                                        MOT: {{.MotStatus.String}}
+                                    </span>
+                                    {{end}}
+                                </div>
+                            </div>
+                        </div>
+                        <form method="POST" action="/super-admin/delete-car-for-user" onsubmit="return confirm('Are you sure you want to delete this vehicle?')">
+                            <input type="hidden" name="car_id" value="{{.ID.Bytes | printf "%x"}}">
+                            <input type="hidden" name="user_id" value="{{$.User.ID.Bytes | printf "%x"}}">
+                            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors">
+                                <i class="fas fa-trash mr-2"></i>Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+            {{else}}
+            <div class="p-8 text-center text-gray-500 dark:text-gray-400">
+                <i class="fas fa-car text-4xl mb-4"></i>
+                <p>No vehicles added yet</p>
+            </div>
+            {{end}}
+        </div>
+
+        <!-- Appointments Section -->
+        {{if .UserAppointments}}
+        <div class="bg-white dark:bg-gray-800 shadow rounded-lg overflow-hidden mt-8">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Appointments ({{len .UserAppointments}})</h2>
+            </div>
+            <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                {{range .UserAppointments}}
+                <div class="p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{{.Title}}</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">
+                                {{.CarRegistration}} • {{.Datetime.Time.Format "Monday, January 2, 2006 at 3:04 PM"}}
+                            </p>
+                            {{if .Description.Valid}}
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">{{.Description.String}}</p>
+                            {{end}}
+                        </div>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
+                            {{if eq .Status "confirmed"}}bg-green-100 text-green-800 dark:bg-green-700 dark:text-green-100{{end}}
+                            {{if eq .Status "pending"}}bg-yellow-100 text-yellow-800 dark:bg-yellow-700 dark:text-yellow-100{{end}}
+                            {{if eq .Status "cancelled"}}bg-red-100 text-red-800 dark:bg-red-700 dark:text-red-100{{end}}
+                            {{if eq .Status "completed"}}bg-blue-100 text-blue-800 dark:bg-blue-700 dark:text-blue-100{{end}}">
+                            {{.Status}}
+                        </span>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+        </div>
+        {{end}}
+    </div>
+</body>
+</html>

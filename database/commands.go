@@ -20,8 +20,9 @@ func ShowHelp() {
 	fmt.Println("")
 	fmt.Println("User Management:")
 	fmt.Println("  listUsers             - List all users with their details")
+	fmt.Println("  setRole <email> <role> - Set user role (user/admin/super_admin)")
 	fmt.Println("  makeAdmin <email>     - Grant admin privileges to user")
-	fmt.Println("  removeAdmin <email>   - Remove admin privileges from user")
+	fmt.Println("  makeSuperAdmin <email> - Grant super admin privileges to user")
 	fmt.Println("  activateUser <email>  - Activate/verify user account")
 	fmt.Println("  deleteUser <email>    - Delete user account and all associated data")
 	fmt.Println("")
@@ -32,8 +33,10 @@ func ShowHelp() {
 	fmt.Println("Other:")
 	fmt.Println("  help                  - Show this help message")
 	fmt.Println("")
-	fmt.Println("Usage: Type the command followed by the email address (where required)")
-	fmt.Println("Example: makeAdmin user@example.com")
+	fmt.Println("Usage: Type the command followed by parameters (where required)")
+	fmt.Println("Examples:")
+	fmt.Println("  makeAdmin user@example.com")
+	fmt.Println("  setRole user@example.com super_admin")
 	fmt.Println("")
 }
 
@@ -53,7 +56,7 @@ func ListUsers() error {
 	for i, user := range users {
 		fmt.Printf("%d. Name: %s\n", i+1, user.Name)
 		fmt.Printf("   Email: %s\n", user.Email)
-		fmt.Printf("   Admin: %t\n", user.IsAdmin)
+		fmt.Printf("   Role: %s\n", user.Role)
 		fmt.Printf("   Email Verified: %t\n", user.EmailVerified)
 		fmt.Printf("   Created: %s\n", user.CreatedAt.Time.Format("2006-01-02 15:04:05"))
 		if i < len(users)-1 {
@@ -77,13 +80,16 @@ func MakeAdmin(email string) error {
 	}
 
 	// Check if already admin
-	if user.IsAdmin {
-		fmt.Printf("User '%s' is already an admin\n", email)
+	if utils.IsAdmin(user.Role) {
+		fmt.Printf("User '%s' already has admin privileges (role: %s)\n", email, user.Role)
 		return nil
 	}
 
 	// Make user admin
-	err = Queries.MakeUserAdmin(context.Background(), email)
+	err = Queries.UpdateUserRole(context.Background(), db.UpdateUserRoleParams{
+		Email: email,
+		Role:  utils.RoleAdmin,
+	})
 	if err != nil {
 		return fmt.Errorf("failed to make user admin: %v", err)
 	}
@@ -111,13 +117,16 @@ func RemoveAdmin(email string) error {
 	}
 
 	// Check if not admin
-	if !user.IsAdmin {
-		fmt.Printf("User '%s' is not an admin\n", email)
+	if !utils.IsAdmin(user.Role) {
+		fmt.Printf("User '%s' does not have admin privileges (role: %s)\n", email, user.Role)
 		return nil
 	}
 
-	// Remove admin privileges
-	err = Queries.RemoveUserAdmin(context.Background(), email)
+	// Remove admin privileges (set to user)
+	err = Queries.UpdateUserRole(context.Background(), db.UpdateUserRoleParams{
+		Email: email,
+		Role:  utils.RoleUser,
+	})
 	if err != nil {
 		return fmt.Errorf("failed to remove admin privileges: %v", err)
 	}
@@ -130,6 +139,64 @@ func RemoveAdmin(email string) error {
 
 	fmt.Printf("Successfully removed admin privileges from '%s' (user logged out)\n", email)
 	return nil
+}
+
+// SetUserRole sets a user's role by email
+func SetUserRole(email, role string) error {
+	if email == "" {
+		return fmt.Errorf("email address is required")
+	}
+	if role == "" {
+		return fmt.Errorf("role is required")
+	}
+
+	// Validate role
+	validRoles := []string{utils.RoleUser, utils.RoleAdmin, utils.RoleSuperAdmin}
+	isValidRole := false
+	for _, validRole := range validRoles {
+		if role == validRole {
+			isValidRole = true
+			break
+		}
+	}
+	if !isValidRole {
+		return fmt.Errorf("invalid role '%s'. Valid roles: %v", role, validRoles)
+	}
+
+	// Check if user exists
+	user, err := Queries.GetUserByEmail(context.Background(), email)
+	if err != nil {
+		return fmt.Errorf("user with email '%s' not found", email)
+	}
+
+	// Check if already has the role
+	if user.Role == role {
+		fmt.Printf("User '%s' already has role '%s'\n", email, role)
+		return nil
+	}
+
+	// Update user role
+	err = Queries.UpdateUserRole(context.Background(), db.UpdateUserRoleParams{
+		Email: email,
+		Role:  role,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to update user role: %v", err)
+	}
+
+	// Invalidate all user sessions to force re-login with new privileges
+	userID, err := uuid.FromBytes(user.ID.Bytes[:])
+	if err == nil {
+		BlacklistAllUserTokens(userID, fmt.Sprintf("role_changed_to_%s", role))
+	}
+
+	fmt.Printf("Successfully changed role for '%s' from '%s' to '%s' (user logged out)\n", email, user.Role, role)
+	return nil
+}
+
+// MakeSuperAdmin grants super admin privileges to a user by email
+func MakeSuperAdmin(email string) error {
+	return SetUserRole(email, utils.RoleSuperAdmin)
 }
 
 // ActivateUser activates/verifies a user account by email
@@ -386,11 +453,21 @@ func ProcessCommand(input string) error {
 		return nil
 	case "list":
 		return ListUsers()
+	case "setrole":
+		if len(parts) < 3 {
+			return fmt.Errorf("setRole requires an email address and role")
+		}
+		return SetUserRole(parts[1], parts[2])
 	case "makeadmin":
 		if len(parts) < 2 {
 			return fmt.Errorf("makeAdmin requires an email address")
 		}
 		return MakeAdmin(parts[1])
+	case "makesuperadmin":
+		if len(parts) < 2 {
+			return fmt.Errorf("makeSuperAdmin requires an email address")
+		}
+		return MakeSuperAdmin(parts[1])
 	case "removeadmin":
 		if len(parts) < 2 {
 			return fmt.Errorf("removeAdmin requires an email address")

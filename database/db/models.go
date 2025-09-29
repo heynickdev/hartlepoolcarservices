@@ -64,7 +64,7 @@ type User struct {
 	Email                    string             `json:"email"`
 	PasswordHash             string             `json:"password_hash"`
 	Phone                    string             `json:"phone"`
-	IsAdmin                  bool               `json:"is_admin"`
+	Role                     string             `json:"role"`
 	EmailVerified            bool               `json:"email_verified"`
 	EmailVerificationToken   pgtype.Text        `json:"email_verification_token"`
 	EmailVerificationExpires pgtype.Timestamptz `json:"email_verification_expires"`

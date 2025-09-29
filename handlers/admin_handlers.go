@@ -6,6 +6,7 @@ import (
 	"hcs-full/database"
 	"hcs-full/database/db"
 	"hcs-full/models"
+	"hcs-full/utils"
 	"log"
 	"net/http"
 	"strings"
@@ -17,7 +18,7 @@ import (
 
 func AdminDashboardHandler(w http.ResponseWriter, r *http.Request) {
 	claims, ok := r.Context().Value("userClaims").(*models.Claims)
-	if !ok || !claims.IsAdmin {
+	if !ok || !utils.IsAdmin(claims.Role) {
 		RenderTemplate(w, r, "error.html", models.PageData{Title: "Forbidden", ErrorMessage: "You do not have permission to view this page."})
 		return
 	}
@@ -98,7 +99,7 @@ func AdminDashboardHandler(w http.ResponseWriter, r *http.Request) {
 
 func AdminOverviewHandler(w http.ResponseWriter, r *http.Request) {
 	claims, ok := r.Context().Value("userClaims").(*models.Claims)
-	if !ok || !claims.IsAdmin {
+	if !ok || !utils.IsAdmin(claims.Role) {
 		RenderTemplate(w, r, "error.html", models.PageData{Title: "Forbidden", ErrorMessage: "You do not have permission to view this page."})
 		return
 	}
@@ -196,7 +197,7 @@ func AdminUpdateAppointmentStatusHandler(w http.ResponseWriter, r *http.Request)
 	}
 
 	claims, ok := r.Context().Value("userClaims").(*models.Claims)
-	if !ok || !claims.IsAdmin {
+	if !ok || !utils.IsAdmin(claims.Role) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 		return
 	}
@@ -236,7 +237,7 @@ func AdminDeleteAppointmentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	claims, ok := r.Context().Value("userClaims").(*models.Claims)
-	if !ok || !claims.IsAdmin {
+	if !ok || !utils.IsAdmin(claims.Role) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 		return
 	}
@@ -265,7 +266,7 @@ func AdminDeleteAppointmentHandler(w http.ResponseWriter, r *http.Request) {
 
 func AdminCalendarHandler(w http.ResponseWriter, r *http.Request) {
 	claims, ok := r.Context().Value("userClaims").(*models.Claims)
-	if !ok || !claims.IsAdmin {
+	if !ok || !utils.IsAdmin(claims.Role) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 		return
 	}
@@ -357,7 +358,7 @@ func generateAdminChartData(cars []db.GetAllCarsWithUsersRow, appointments []db.
 
 func AdminVehicleDetailHandler(w http.ResponseWriter, r *http.Request) {
 	claims, ok := r.Context().Value("userClaims").(*models.Claims)
-	if !ok || !claims.IsAdmin {
+	if !ok || !utils.IsAdmin(claims.Role) {
 		RenderTemplate(w, r, "error.html", models.PageData{Title: "Forbidden", ErrorMessage: "You do not have permission to view this page."})
 		return
 	}
@@ -424,7 +425,7 @@ func AdminDeleteCarHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	claims, ok := r.Context().Value("userClaims").(*models.Claims)
-	if !ok || !claims.IsAdmin {
+	if !ok || !utils.IsAdmin(claims.Role) {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 		return
 	}
