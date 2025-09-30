@@ -236,3 +236,103 @@ func (e *EmailService) SendAppointmentNotification(userName, userEmail, carRegis
 
 	return e.SendEmail("info@hartlepoolcarservices.com", subject, body)
 }
+
+func (e *EmailService) SendAppointmentConfirmedEmail(userName, userEmail, carRegistration, carMake, appointmentTitle, appointmentDateTime string) error {
+	subject := "Appointment Confirmed - Hartlepool Car Services"
+	body := fmt.Sprintf(`
+		<html>
+		<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+			<div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+				<h2 style="color: #27ae60;">Appointment Confirmed!</h2>
+				<p>Dear %s,</p>
+				<p>Great news! Your appointment has been confirmed by our team.</p>
+
+				<div style="background-color: #d5f4e6; border-left: 4px solid #27ae60; padding: 15px; margin: 20px 0;">
+					<h3 style="margin-top: 0; color: #27ae60;">Appointment Details</h3>
+					<p style="margin: 8px 0;"><strong>Service:</strong> %s</p>
+					<p style="margin: 8px 0;"><strong>Vehicle:</strong> %s - %s</p>
+					<p style="margin: 8px 0;"><strong>Date & Time:</strong> %s</p>
+					<p style="margin: 8px 0;"><strong>Status:</strong> <span style="color: #27ae60; font-weight: bold;">CONFIRMED</span></p>
+				</div>
+
+				<p>We look forward to seeing you! If you need to make any changes, please contact us as soon as possible.</p>
+
+				<hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+				<p style="font-size: 12px; color: #7f8c8d;">
+					Hartlepool Car Services<br>
+					Email: info@hartlepoolcarservices.com
+				</p>
+			</div>
+		</body>
+		</html>
+	`, userName, appointmentTitle, carRegistration, carMake, appointmentDateTime)
+
+	return e.SendEmail(userEmail, subject, body)
+}
+
+func (e *EmailService) SendAppointmentCancelledEmail(userName, userEmail, carRegistration, carMake, appointmentTitle, appointmentDateTime string) error {
+	subject := "Appointment Cancelled - Hartlepool Car Services"
+	body := fmt.Sprintf(`
+		<html>
+		<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+			<div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+				<h2 style="color: #e74c3c;">Appointment Cancelled</h2>
+				<p>Dear %s,</p>
+				<p>Your appointment has been cancelled.</p>
+
+				<div style="background-color: #fadbd8; border-left: 4px solid #e74c3c; padding: 15px; margin: 20px 0;">
+					<h3 style="margin-top: 0; color: #e74c3c;">Cancelled Appointment Details</h3>
+					<p style="margin: 8px 0;"><strong>Service:</strong> %s</p>
+					<p style="margin: 8px 0;"><strong>Vehicle:</strong> %s - %s</p>
+					<p style="margin: 8px 0;"><strong>Originally Scheduled:</strong> %s</p>
+					<p style="margin: 8px 0;"><strong>Status:</strong> <span style="color: #e74c3c; font-weight: bold;">CANCELLED</span></p>
+				</div>
+
+				<p>If you would like to reschedule or have any questions, please feel free to contact us or book a new appointment through your dashboard.</p>
+
+				<hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+				<p style="font-size: 12px; color: #7f8c8d;">
+					Hartlepool Car Services<br>
+					Email: info@hartlepoolcarservices.com
+				</p>
+			</div>
+		</body>
+		</html>
+	`, userName, appointmentTitle, carRegistration, carMake, appointmentDateTime)
+
+	return e.SendEmail(userEmail, subject, body)
+}
+
+func (e *EmailService) SendAppointmentCompletedEmail(userName, userEmail, carRegistration, carMake, appointmentTitle, appointmentDateTime string) error {
+	subject := "Service Completed - Hartlepool Car Services"
+	body := fmt.Sprintf(`
+		<html>
+		<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+			<div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+				<h2 style="color: #3498db;">Service Completed</h2>
+				<p>Dear %s,</p>
+				<p>Thank you for choosing Hartlepool Car Services! Your service has been completed.</p>
+
+				<div style="background-color: #d6eaf8; border-left: 4px solid #3498db; padding: 15px; margin: 20px 0;">
+					<h3 style="margin-top: 0; color: #3498db;">Completed Service Details</h3>
+					<p style="margin: 8px 0;"><strong>Service:</strong> %s</p>
+					<p style="margin: 8px 0;"><strong>Vehicle:</strong> %s - %s</p>
+					<p style="margin: 8px 0;"><strong>Service Date:</strong> %s</p>
+					<p style="margin: 8px 0;"><strong>Status:</strong> <span style="color: #3498db; font-weight: bold;">COMPLETED</span></p>
+				</div>
+
+				<p>We hope you're satisfied with our service! If you have any questions or concerns, please don't hesitate to contact us.</p>
+				<p>We look forward to serving you again in the future.</p>
+
+				<hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+				<p style="font-size: 12px; color: #7f8c8d;">
+					Hartlepool Car Services<br>
+					Email: info@hartlepoolcarservices.com
+				</p>
+			</div>
+		</body>
+		</html>
+	`, userName, appointmentTitle, carRegistration, carMake, appointmentDateTime)
+
+	return e.SendEmail(userEmail, subject, body)
+}

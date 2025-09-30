@@ -216,6 +216,15 @@ func AdminUpdateAppointmentStatusHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
+	// Get appointment details before updating for email notification
+	appointment, err := database.Queries.GetAppointmentsByID(context.Background(), pgtype.UUID{Bytes: appointmentID, Valid: true})
+	if err != nil {
+		log.Printf("Error fetching appointment: %v", err)
+		http.Redirect(w, r, "/admin/dashboard?error=Error+fetching+appointment", http.StatusSeeOther)
+		return
+	}
+
+	// Update appointment status
 	err = database.Queries.UpdateAppointmentStatus(context.Background(), db.UpdateAppointmentStatusParams{
 		ID:     pgtype.UUID{Bytes: appointmentID, Valid: true},
 		Status: newStatus,
@@ -225,6 +234,61 @@ func AdminUpdateAppointmentStatusHandler(w http.ResponseWriter, r *http.Request)
 		log.Printf("Error updating appointment status: %v", err)
 		http.Redirect(w, r, "/admin/dashboard?error=Error+updating+appointment+status", http.StatusSeeOther)
 		return
+	}
+
+	// Send email notification to customer based on status change
+	if newStatus == "confirmed" || newStatus == "cancelled" || newStatus == "completed" {
+		// Get user details
+		user, err := database.Queries.GetUserByID(context.Background(), appointment.UserID)
+		if err == nil {
+			// Get car details
+			car, err := database.Queries.GetCarByID(context.Background(), appointment.CarID)
+			if err == nil {
+				emailService := utils.NewEmailService()
+				formattedDateTime := appointment.Datetime.Time.Format("Monday, January 2, 2006 at 3:04 PM")
+
+				carMake := car.Make.String
+				if !car.Make.Valid || carMake == "" {
+					carMake = "Unknown"
+				}
+
+				// Send appropriate email based on status
+				switch newStatus {
+				case "confirmed":
+					err = emailService.SendAppointmentConfirmedEmail(
+						user.Name,
+						user.Email,
+						car.RegistrationNumber,
+						carMake,
+						appointment.Title,
+						formattedDateTime,
+					)
+				case "cancelled":
+					err = emailService.SendAppointmentCancelledEmail(
+						user.Name,
+						user.Email,
+						car.RegistrationNumber,
+						carMake,
+						appointment.Title,
+						formattedDateTime,
+					)
+				case "completed":
+					err = emailService.SendAppointmentCompletedEmail(
+						user.Name,
+						user.Email,
+						car.RegistrationNumber,
+						carMake,
+						appointment.Title,
+						formattedDateTime,
+					)
+				}
+
+				if err != nil {
+					log.Printf("Error sending appointment status email: %v", err)
+					// Don't fail the status update if email fails
+				}
+			}
+		}
 	}
 
 	http.Redirect(w, r, "/admin/dashboard?success=Appointment+status+updated+successfully", http.StatusSeeOther)
