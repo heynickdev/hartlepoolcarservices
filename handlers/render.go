@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"hcs-full/database"
 	"hcs-full/models"
 	"hcs-full/utils"
@@ -13,6 +14,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -30,6 +32,17 @@ var funcMap = template.FuncMap{
 	},
 	"contains": func(s, substr string) bool {
 		return strings.Contains(s, substr)
+	},
+	"uuidToString": func(u pgtype.UUID) string {
+		if !u.Valid {
+			return ""
+		}
+		// Convert [16]byte to uuid.UUID and format as string
+		uid, err := uuid.FromBytes(u.Bytes[:])
+		if err != nil {
+			return fmt.Sprintf("%x", u.Bytes)
+		}
+		return uid.String()
 	},
 }
 

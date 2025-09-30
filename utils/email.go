@@ -156,3 +156,49 @@ func (e *EmailService) SendVerificationEmail(to, token string) error {
 
 	return e.SendEmail(to, subject, body)
 }
+
+func (e *EmailService) SendPasswordResetEmail(to, token string) error {
+	baseURL := os.Getenv("BASE_URL")
+	if baseURL == "" {
+		baseURL = "http://localhost:8080"
+	}
+
+	// Ensure HTTPS for production domain
+	if baseURL == "hartlepoolcarservices.com" {
+		baseURL = "https://hartlepoolcarservices.com"
+	}
+
+	resetURL := fmt.Sprintf("%s/reset-password?token=%s", baseURL, token)
+
+	subject := "Password Reset Request - Hartlepool Car Services"
+	body := fmt.Sprintf(`
+		<html>
+		<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+			<div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+				<h2 style="color: #2c3e50;">Password Reset Request</h2>
+				<p>You have requested to reset your password for Hartlepool Car Services. Click the button below to reset your password:</p>
+
+				<div style="text-align: center; margin: 30px 0;">
+					<a href="%s" style="background-color: #e74c3c; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Reset Password</a>
+				</div>
+
+				<p>If the button doesn't work, you can also copy and paste this link into your browser:</p>
+				<p style="word-break: break-all; color: #7f8c8d;">%s</p>
+
+				<p style="margin-top: 30px;">This password reset link will expire in 1 hour.</p>
+
+				<hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+				<p style="font-size: 12px; color: #7f8c8d;">
+					If you didn't request a password reset, please ignore this email. Your password will remain unchanged.
+				</p>
+				<p style="font-size: 12px; color: #7f8c8d;">
+					Hartlepool Car Services<br>
+					Email: info@hartlepoolcarservices.com
+				</p>
+			</div>
+		</body>
+		</html>
+	`, resetURL, resetURL)
+
+	return e.SendEmail(to, subject, body)
+}

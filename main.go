@@ -96,6 +96,7 @@ func main() {
 	superAdminRoutes.Handle("/super-admin/update-user-role", http.HandlerFunc(handlers.SuperAdminUpdateUserRoleHandler))
 	superAdminRoutes.Handle("/super-admin/delete-user", http.HandlerFunc(handlers.SuperAdminDeleteUserHandler))
 	superAdminRoutes.Handle("/super-admin/activate-user", http.HandlerFunc(handlers.SuperAdminActivateUserHandler))
+	superAdminRoutes.Handle("/super-admin/send-password-reset", http.HandlerFunc(handlers.SuperAdminSendPasswordResetHandler))
 	superAdminRoutes.Handle("/super-admin/allocate-vehicle", http.HandlerFunc(handlers.SuperAdminAllocateVehicleHandler))
 	superAdminRoutes.Handle("/super-admin/remove-vehicle", http.HandlerFunc(handlers.SuperAdminRemoveVehicleHandler))
 	superAdminRoutes.Handle("/super-admin/toggle-dashboard", http.HandlerFunc(handlers.SuperAdminToggleDashboardHandler))

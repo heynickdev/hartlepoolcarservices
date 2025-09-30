@@ -81,6 +81,10 @@
                             <p class="text-xs font-medium text-yellow-600 dark:text-yellow-400">Super Admin</p>
                         </div>
                     </div>
+                    <a href="/" class="flex items-center space-x-3 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 px-4 py-3 rounded-lg text-base font-medium w-full mb-2">
+                        <i class="fas fa-home text-xl"></i>
+                        <span>Home</span>
+                    </a>
                     <a href="/logout" class="flex items-center space-x-3 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/50 px-4 py-3 rounded-lg text-base font-medium w-full">
                         <i class="fas fa-sign-out-alt text-xl"></i>
                         <span>Logout</span>
@@ -139,35 +143,35 @@
 
         <!-- Main Content -->
         <div class="flex-1 lg:pl-0">
-            <main class="p-6">
+            <main class="p-4 sm:p-6">
                 <!-- Page Header -->
-                <div class="mb-8">
+                <div class="mb-6 sm:mb-8">
                     <div class="flex items-center justify-between">
-                        <div>
-                            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">System Overview</h1>
-                            <p class="mt-2 text-gray-600 dark:text-gray-400">Complete system administration and monitoring</p>
+                        <div class="min-w-0 flex-1">
+                            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white truncate">System Overview</h1>
+                            <p class="mt-1 sm:mt-2 text-sm sm:text-base text-gray-600 dark:text-gray-400">Complete system administration and monitoring</p>
                         </div>
-                        <button id="mobile-burger" class="lg:hidden p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <button id="mobile-burger" class="lg:hidden p-2 rounded-lg text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 flex-shrink-0 ml-2">
                             <i class="fas fa-bars text-xl"></i>
                         </button>
                     </div>
                 </div>
 
                 <!-- Statistics Grid -->
-                <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+                <div class="grid grid-cols-1 gap-4 sm:gap-5 md:gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-6 sm:mb-8">
                     <!-- Total Users -->
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-                        <div class="p-5">
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg border border-gray-200 dark:border-gray-700">
+                        <div class="p-4 sm:p-5">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0">
-                                    <div class="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
-                                        <i class="fas fa-users text-white"></i>
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-500 rounded-md flex items-center justify-center">
+                                        <i class="fas fa-users text-white text-sm sm:text-base"></i>
                                     </div>
                                 </div>
-                                <div class="ml-5 w-0 flex-1">
+                                <div class="ml-3 sm:ml-5 w-0 flex-1">
                                     <dl>
-                                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Users</dt>
-                                        <dd class="text-lg font-medium text-gray-900 dark:text-white">{{.TotalUsers}}</dd>
+                                        <dt class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Users</dt>
+                                        <dd class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">{{.TotalUsers}}</dd>
                                     </dl>
                                 </div>
                             </div>
@@ -175,18 +179,18 @@
                     </div>
 
                     <!-- Total Appointments -->
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-                        <div class="p-5">
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg border border-gray-200 dark:border-gray-700">
+                        <div class="p-4 sm:p-5">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0">
-                                    <div class="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
-                                        <i class="fas fa-calendar-check text-white"></i>
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-green-500 rounded-md flex items-center justify-center">
+                                        <i class="fas fa-calendar-check text-white text-sm sm:text-base"></i>
                                     </div>
                                 </div>
-                                <div class="ml-5 w-0 flex-1">
+                                <div class="ml-3 sm:ml-5 w-0 flex-1">
                                     <dl>
-                                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Appointments</dt>
-                                        <dd class="text-lg font-medium text-gray-900 dark:text-white">{{.TotalAppointments}}</dd>
+                                        <dt class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Appointments</dt>
+                                        <dd class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">{{.TotalAppointments}}</dd>
                                     </dl>
                                 </div>
                             </div>
@@ -194,18 +198,18 @@
                     </div>
 
                     <!-- Total Vehicles -->
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-                        <div class="p-5">
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg border border-gray-200 dark:border-gray-700">
+                        <div class="p-4 sm:p-5">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0">
-                                    <div class="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
-                                        <i class="fas fa-car text-white"></i>
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-purple-500 rounded-md flex items-center justify-center">
+                                        <i class="fas fa-car text-white text-sm sm:text-base"></i>
                                     </div>
                                 </div>
-                                <div class="ml-5 w-0 flex-1">
+                                <div class="ml-3 sm:ml-5 w-0 flex-1">
                                     <dl>
-                                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Vehicles</dt>
-                                        <dd class="text-lg font-medium text-gray-900 dark:text-white">{{.TotalCars}}</dd>
+                                        <dt class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Total Vehicles</dt>
+                                        <dd class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">{{.TotalCars}}</dd>
                                     </dl>
                                 </div>
                             </div>
@@ -213,18 +217,18 @@
                     </div>
 
                     <!-- Pending Appointments -->
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
-                        <div class="p-5">
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg border border-gray-200 dark:border-gray-700">
+                        <div class="p-4 sm:p-5">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0">
-                                    <div class="w-8 h-8 bg-yellow-500 rounded-md flex items-center justify-center">
-                                        <i class="fas fa-clock text-white"></i>
+                                    <div class="w-8 h-8 sm:w-10 sm:h-10 bg-yellow-500 rounded-md flex items-center justify-center">
+                                        <i class="fas fa-clock text-white text-sm sm:text-base"></i>
                                     </div>
                                 </div>
-                                <div class="ml-5 w-0 flex-1">
+                                <div class="ml-3 sm:ml-5 w-0 flex-1">
                                     <dl>
-                                        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Pending</dt>
-                                        <dd class="text-lg font-medium text-gray-900 dark:text-white">{{.PendingAppointments}}</dd>
+                                        <dt class="text-xs sm:text-sm font-medium text-gray-500 dark:text-gray-400 truncate">Pending</dt>
+                                        <dd class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">{{.PendingAppointments}}</dd>
                                     </dl>
                                 </div>
                             </div>
@@ -233,27 +237,27 @@
                 </div>
 
                 <!-- Role Distribution and Quick Actions -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-8">
                     <!-- Role Distribution -->
-                    <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
-                        <div class="px-4 py-5 sm:p-6">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">User Role Distribution</h3>
-                            <div class="mt-5 space-y-4">
+                    <div class="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700">
+                        <div class="px-4 py-4 sm:p-6">
+                            <h3 class="text-base sm:text-lg leading-6 font-semibold text-gray-900 dark:text-white">User Role Distribution</h3>
+                            <div class="mt-4 sm:mt-5 space-y-3 sm:space-y-4">
                                 {{range $role, $count := .RoleStats}}
-                                <div class="flex justify-between items-center">
+                                <div class="flex justify-between items-center p-2 sm:p-0">
                                     <div class="flex items-center">
                                         {{if eq $role "super_admin"}}
-                                        <i class="fas fa-crown text-yellow-500 mr-2"></i>
-                                        <span class="text-gray-700 dark:text-gray-300">Super Admins</span>
+                                        <i class="fas fa-crown text-yellow-500 mr-2 text-sm sm:text-base"></i>
+                                        <span class="text-sm sm:text-base text-gray-700 dark:text-gray-300">Super Admins</span>
                                         {{else if eq $role "admin"}}
-                                        <i class="fas fa-user-shield text-blue-500 mr-2"></i>
-                                        <span class="text-gray-700 dark:text-gray-300">Admins</span>
+                                        <i class="fas fa-user-shield text-blue-500 mr-2 text-sm sm:text-base"></i>
+                                        <span class="text-sm sm:text-base text-gray-700 dark:text-gray-300">Admins</span>
                                         {{else}}
-                                        <i class="fas fa-user text-gray-500 mr-2"></i>
-                                        <span class="text-gray-700 dark:text-gray-300">Users</span>
+                                        <i class="fas fa-user text-gray-500 mr-2 text-sm sm:text-base"></i>
+                                        <span class="text-sm sm:text-base text-gray-700 dark:text-gray-300">Users</span>
                                         {{end}}
                                     </div>
-                                    <span class="text-lg font-semibold text-gray-900 dark:text-white">{{$count}}</span>
+                                    <span class="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">{{$count}}</span>
                                 </div>
                                 {{end}}
                             </div>
@@ -261,26 +265,26 @@
                     </div>
 
                     <!-- Quick Actions -->
-                    <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
-                        <div class="px-4 py-5 sm:p-6">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Quick Actions</h3>
-                            <div class="mt-5 space-y-3">
+                    <div class="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700">
+                        <div class="px-4 py-4 sm:p-6">
+                            <h3 class="text-base sm:text-lg leading-6 font-semibold text-gray-900 dark:text-white">Quick Actions</h3>
+                            <div class="mt-4 sm:mt-5 space-y-2 sm:space-y-3">
                                 <a href="/super-admin/users" class="block p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/40 transition">
                                     <div class="flex items-center">
-                                        <i class="fas fa-users text-blue-600 dark:text-blue-400 mr-3"></i>
-                                        <span class="text-blue-700 dark:text-blue-300 font-medium">Manage Users</span>
+                                        <i class="fas fa-users text-blue-600 dark:text-blue-400 mr-3 text-sm sm:text-base"></i>
+                                        <span class="text-sm sm:text-base text-blue-700 dark:text-blue-300 font-medium">Manage Users</span>
                                     </div>
                                 </a>
                                 <a href="/super-admin/vehicles" class="block p-3 bg-green-50 dark:bg-green-900/20 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/40 transition">
                                     <div class="flex items-center">
-                                        <i class="fas fa-car text-green-600 dark:text-green-400 mr-3"></i>
-                                        <span class="text-green-700 dark:text-green-300 font-medium">Manage Vehicles</span>
+                                        <i class="fas fa-car text-green-600 dark:text-green-400 mr-3 text-sm sm:text-base"></i>
+                                        <span class="text-sm sm:text-base text-green-700 dark:text-green-300 font-medium">Manage Vehicles</span>
                                     </div>
                                 </a>
                                 <a href="/admin/dashboard" class="block p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/40 transition">
                                     <div class="flex items-center">
-                                        <i class="fas fa-user-cog text-purple-600 dark:text-purple-400 mr-3"></i>
-                                        <span class="text-purple-700 dark:text-purple-300 font-medium">Switch to Admin View</span>
+                                        <i class="fas fa-user-cog text-purple-600 dark:text-purple-400 mr-3 text-sm sm:text-base"></i>
+                                        <span class="text-sm sm:text-base text-purple-700 dark:text-purple-300 font-medium">Switch to Admin View</span>
                                     </div>
                                 </a>
                             </div>
@@ -288,44 +292,173 @@
                     </div>
                 </div>
 
+                <!-- User Management Section -->
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700 mb-6 sm:mb-8">
+                    <div class="px-4 py-4 sm:px-6 sm:py-5 border-b border-gray-200 dark:border-gray-700">
+                        <h3 class="text-base sm:text-lg leading-6 font-semibold text-gray-900 dark:text-white">User Management</h3>
+                        <p class="mt-1 text-xs sm:text-sm text-gray-500 dark:text-gray-400">Manage all users in the system</p>
+                    </div>
+                    <div class="px-4 py-4 sm:px-6 sm:py-5">
+                        {{if .AllUsers}}
+                        <div class="space-y-2">
+                            {{range .AllUsers}}
+                            <div class="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+                                <button
+                                    type="button"
+                                    onclick="toggleUserDropdown('{{uuidToString .ID}}')"
+                                    class="w-full flex items-center justify-between p-3 sm:p-4 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                                >
+                                    <div class="flex items-center space-x-3 min-w-0 flex-1">
+                                        <div class="p-2 sm:p-2.5 rounded-lg flex-shrink-0
+                                            {{if eq .Role "super_admin"}}bg-yellow-100 dark:bg-yellow-900/50{{else if eq .Role "admin"}}bg-blue-100 dark:bg-blue-900/50{{else}}bg-gray-100 dark:bg-gray-600{{end}}">
+                                            {{if eq .Role "super_admin"}}
+                                            <i class="fas fa-crown text-yellow-600 dark:text-yellow-400 text-sm sm:text-base"></i>
+                                            {{else if eq .Role "admin"}}
+                                            <i class="fas fa-user-shield text-blue-600 dark:text-blue-400 text-sm sm:text-base"></i>
+                                            {{else}}
+                                            <i class="fas fa-user text-gray-600 dark:text-gray-400 text-sm sm:text-base"></i>
+                                            {{end}}
+                                        </div>
+                                        <div class="text-left min-w-0 flex-1">
+                                            <p class="font-medium text-sm sm:text-base text-gray-900 dark:text-white truncate">{{.Name}}</p>
+                                            <p class="text-xs sm:text-sm text-gray-600 dark:text-gray-400 truncate">{{.Email}}</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-500 capitalize">{{.Role}}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
+                                        {{if .EmailVerified}}
+                                        <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200">
+                                            <i class="fas fa-check-circle mr-1"></i>
+                                            Verified
+                                        </span>
+                                        {{else}}
+                                        <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200">
+                                            <i class="fas fa-times-circle mr-1"></i>
+                                            Unverified
+                                        </span>
+                                        {{end}}
+                                        <i class="fas fa-chevron-down text-gray-400 transition-transform user-dropdown-icon text-sm sm:text-base" id="icon-{{uuidToString .ID}}"></i>
+                                    </div>
+                                </button>
+
+                                <div id="dropdown-{{uuidToString .ID}}" class="hidden border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+                                    <div class="p-3 space-y-2">
+                                        <button
+                                            onclick="viewUserDetails('{{uuidToString .ID}}', '{{.Name}}', '{{.Email}}', '{{.Role}}', {{.EmailVerified}})"
+                                            class="w-full flex items-center space-x-2 px-3 py-2 text-left text-xs sm:text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                                        >
+                                            <i class="fas fa-eye w-4"></i>
+                                            <span>View Details</span>
+                                        </button>
+                                        {{if not .EmailVerified}}
+                                        <button
+                                            onclick="verifyUserEmail('{{uuidToString .ID}}', '{{.Email}}')"
+                                            class="w-full flex items-center space-x-2 px-3 py-2 text-left text-xs sm:text-sm text-green-700 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/50 rounded-lg transition-colors"
+                                        >
+                                            <i class="fas fa-check-circle w-4"></i>
+                                            <span>Verify Email</span>
+                                        </button>
+                                        {{end}}
+                                        <button
+                                            onclick="sendPasswordReset('{{.Email}}')"
+                                            class="w-full flex items-center space-x-2 px-3 py-2 text-left text-xs sm:text-sm text-blue-700 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/50 rounded-lg transition-colors"
+                                        >
+                                            <i class="fas fa-key w-4"></i>
+                                            <span>Send Password Reset</span>
+                                        </button>
+                                        {{if ne .Role "super_admin"}}
+                                        <button
+                                            onclick="promoteToAdmin('{{uuidToString .ID}}', '{{.Name}}')"
+                                            class="w-full flex items-center space-x-2 px-3 py-2 text-left text-xs sm:text-sm text-yellow-700 dark:text-yellow-400 hover:bg-yellow-50 dark:hover:bg-yellow-900/50 rounded-lg transition-colors"
+                                        >
+                                            <i class="fas fa-user-shield w-4"></i>
+                                            <span>Change Role</span>
+                                        </button>
+                                        <button
+                                            onclick="deleteUser('{{uuidToString .ID}}', '{{.Name}}')"
+                                            class="w-full flex items-center space-x-2 px-3 py-2 text-left text-xs sm:text-sm text-red-700 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/50 rounded-lg transition-colors"
+                                        >
+                                            <i class="fas fa-trash w-4"></i>
+                                            <span>Delete User</span>
+                                        </button>
+                                        {{end}}
+                                    </div>
+                                </div>
+                            </div>
+                            {{end}}
+                        </div>
+                        {{else}}
+                        <div class="text-center py-8">
+                            <i class="fas fa-users text-gray-400 text-3xl sm:text-4xl mb-2 sm:mb-3"></i>
+                            <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400">No users registered yet</p>
+                        </div>
+                        {{end}}
+                    </div>
+                </div>
+
                 <!-- Recent Appointments Table -->
-                <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
-                    <div class="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
+                <div class="bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-200 dark:border-gray-700">
+                    <div class="px-4 py-4 sm:px-6 sm:py-5 border-b border-gray-200 dark:border-gray-700">
                         <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Recent Appointments</h3>
                         <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">Latest appointments across all users</p>
                     </div>
                     <div class="overflow-hidden">
-                        <div class="overflow-x-auto">
+                        <!-- Mobile Card View -->
+                        <div class="block sm:hidden px-4 py-4 space-y-3">
+                            {{range $index, $appointment := .AllAppointments}}
+                            {{if lt $index 10}}
+                            <div class="border border-gray-200 dark:border-gray-700 rounded-lg p-3 bg-gray-50 dark:bg-gray-700">
+                                <div class="flex items-start justify-between mb-2">
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-medium text-gray-900 dark:text-white truncate">{{$appointment.UserName}}</p>
+                                        <p class="text-xs text-gray-600 dark:text-gray-400 truncate">{{$appointment.UserEmail}}</p>
+                                    </div>
+                                    <span class="ml-2 inline-flex px-2 py-1 text-xs font-semibold rounded-full flex-shrink-0
+                                        {{if eq $appointment.Status "confirmed"}}bg-green-100 text-green-800 dark:bg-green-700 dark:text-green-100{{end}}
+                                        {{if eq $appointment.Status "pending"}}bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-yellow-100{{end}}
+                                        {{if eq $appointment.Status "cancelled"}}bg-red-100 text-red-800 dark:bg-red-700 dark:text-red-100{{end}}
+                                        {{if eq $appointment.Status "completed"}}bg-blue-100 text-blue-800 dark:bg-blue-700 dark:text-blue-100{{end}}">
+                                        {{$appointment.Status}}
+                                    </span>
+                                </div>
+                                <div class="space-y-1 text-xs">
+                                    <p class="text-gray-700 dark:text-gray-300"><span class="font-medium">Vehicle:</span> {{$appointment.CarRegistration}} - {{$appointment.CarMake}}</p>
+                                    <p class="text-gray-700 dark:text-gray-300"><span class="font-medium">Date:</span> {{$appointment.Datetime.Time.Format "2006-01-02 15:04"}}</p>
+                                </div>
+                                <a href="/admin/dashboard" class="mt-2 block text-xs text-primary-600 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-200 font-medium">View Details →</a>
+                            </div>
+                            {{end}}
+                            {{end}}
+                        </div>
+
+                        <!-- Desktop Table View -->
+                        <div class="hidden sm:block overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead class="bg-gray-50 dark:bg-gray-700">
                                     <tr>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">User</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Vehicle</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">User</th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Vehicle</th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Date</th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
+                                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                     {{range $index, $appointment := .AllAppointments}}
                                     {{if lt $index 10}}
-                                    <tr>
-                                        <td class="px-6 py-4 whitespace-nowrap">
-                                            <div class="flex items-center">
-                                                <div class="ml-0">
-                                                    <div class="text-sm font-medium text-gray-900 dark:text-white">{{$appointment.UserName}}</div>
-                                                    <div class="text-sm text-gray-500 dark:text-gray-400">{{$appointment.UserEmail}}</div>
-                                                </div>
-                                            </div>
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700">
+                                        <td class="px-4 py-3">
+                                            <div class="text-sm font-medium text-gray-900 dark:text-white">{{$appointment.UserName}}</div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400">{{$appointment.UserEmail}}</div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-4 py-3">
                                             <div class="text-sm text-gray-900 dark:text-white">{{$appointment.CarRegistration}}</div>
-                                            <div class="text-sm text-gray-500 dark:text-gray-400">{{$appointment.CarMake}}</div>
+                                            <div class="text-xs text-gray-500 dark:text-gray-400">{{$appointment.CarMake}}</div>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
+                                        <td class="px-4 py-3 text-sm text-gray-900 dark:text-white">
                                             {{$appointment.Datetime.Time.Format "2006-01-02 15:04"}}
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap">
+                                        <td class="px-4 py-3">
                                             <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full
                                                 {{if eq $appointment.Status "confirmed"}}bg-green-100 text-green-800 dark:bg-green-700 dark:text-green-100{{end}}
                                                 {{if eq $appointment.Status "pending"}}bg-yellow-100 text-yellow-800 dark:bg-yellow-600 dark:text-yellow-100{{end}}
@@ -334,7 +467,7 @@
                                                 {{$appointment.Status}}
                                             </span>
                                         </td>
-                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <td class="px-4 py-3 text-sm font-medium">
                                             <a href="/admin/dashboard" class="text-primary-600 dark:text-primary-400 hover:text-primary-900 dark:hover:text-primary-200">View Details</a>
                                         </td>
                                     </tr>
@@ -349,6 +482,176 @@
         </div>
     </div>
 
+    <!-- Modal Overlays -->
+    <!-- View User Details Modal -->
+    <div id="viewDetailsModal" class="hidden fixed inset-0 z-50 overflow-y-auto" style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0" onclick="closeModal('viewDetailsModal')">
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
+            <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full" onclick="event.stopPropagation()">
+                <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="w-full mt-3 text-center sm:mt-0 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white mb-4">User Details</h3>
+                            <div class="mt-2 space-y-3">
+                                <div class="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
+                                    <span class="font-medium text-gray-700 dark:text-gray-300">Name:</span>
+                                    <span id="detailName" class="text-gray-900 dark:text-white"></span>
+                                </div>
+                                <div class="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
+                                    <span class="font-medium text-gray-700 dark:text-gray-300">Email:</span>
+                                    <span id="detailEmail" class="text-gray-900 dark:text-white"></span>
+                                </div>
+                                <div class="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
+                                    <span class="font-medium text-gray-700 dark:text-gray-300">Role:</span>
+                                    <span id="detailRole" class="capitalize text-gray-900 dark:text-white"></span>
+                                </div>
+                                <div class="flex justify-between py-2 border-b border-gray-200 dark:border-gray-700">
+                                    <span class="font-medium text-gray-700 dark:text-gray-300">Email Status:</span>
+                                    <span id="detailVerified" class="text-gray-900 dark:text-white"></span>
+                                </div>
+                                <div class="flex justify-between py-2">
+                                    <span class="font-medium text-gray-700 dark:text-gray-300">User ID:</span>
+                                    <span id="detailUserId" class="text-xs text-gray-600 dark:text-gray-400 font-mono"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" onclick="closeModal('viewDetailsModal')" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-primary-600 text-base font-medium text-white hover:bg-primary-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verify Email Modal -->
+    <div id="verifyEmailModal" class="hidden fixed inset-0 z-50 overflow-y-auto" style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0" onclick="closeModal('verifyEmailModal')">
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
+            <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full" onclick="event.stopPropagation()">
+                <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/50 sm:mx-0 sm:h-10 sm:w-10">
+                            <i class="fas fa-check-circle text-green-600 dark:text-green-400"></i>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Verify Email</h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Manually verify email for <span id="verifyEmailAddress" class="font-semibold"></span>?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" onclick="confirmVerifyEmail()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                        Verify
+                    </button>
+                    <button type="button" onclick="closeModal('verifyEmailModal')" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Send Password Reset Modal -->
+    <div id="passwordResetModal" class="hidden fixed inset-0 z-50 overflow-y-auto" style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0" onclick="closeModal('passwordResetModal')">
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
+            <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full" onclick="event.stopPropagation()">
+                <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900/50 sm:mx-0 sm:h-10 sm:w-10">
+                            <i class="fas fa-key text-blue-600 dark:text-blue-400"></i>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Send Password Reset</h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Send password reset email to <span id="resetEmailAddress" class="font-semibold"></span>?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" onclick="confirmPasswordReset()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                        Send
+                    </button>
+                    <button type="button" onclick="closeModal('passwordResetModal')" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Role Modal -->
+    <div id="changeRoleModal" class="hidden fixed inset-0 z-50 overflow-y-auto" style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0" onclick="closeModal('changeRoleModal')">
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
+            <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full" onclick="event.stopPropagation()">
+                <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 dark:bg-yellow-900/50 sm:mx-0 sm:h-10 sm:w-10">
+                            <i class="fas fa-user-shield text-yellow-600 dark:text-yellow-400"></i>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Change User Role</h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">Change role for <span id="roleUserName" class="font-semibold"></span></p>
+                                <label for="newRole" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select New Role:</label>
+                                <select id="newRole" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md">
+                                    <option value="user">User</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="super_admin">Super Admin</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" onclick="confirmChangeRole()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-yellow-600 text-base font-medium text-white hover:bg-yellow-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                        Change Role
+                    </button>
+                    <button type="button" onclick="closeModal('changeRoleModal')" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete User Modal -->
+    <div id="deleteUserModal" class="hidden fixed inset-0 z-50 overflow-y-auto" style="background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0" onclick="closeModal('deleteUserModal')">
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span>
+            <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full" onclick="event.stopPropagation()">
+                <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="sm:flex sm:items-start">
+                        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/50 sm:mx-0 sm:h-10 sm:w-10">
+                            <i class="fas fa-exclamation-triangle text-red-600 dark:text-red-400"></i>
+                        </div>
+                        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                            <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Delete User</h3>
+                            <div class="mt-2">
+                                <p class="text-sm text-gray-500 dark:text-gray-400">Are you sure you want to delete <span id="deleteUserName" class="font-semibold"></span>? This action cannot be undone.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <button type="button" onclick="confirmDeleteUser()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                        Delete
+                    </button>
+                    <button type="button" onclick="closeModal('deleteUserModal')" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Mobile menu toggle script -->
     <script>
         // Mobile menu toggle
@@ -356,21 +659,202 @@
         const mobileMenuOpen = document.getElementById('mobile-burger');
         const mobileMenuClose = document.getElementById('mobile-menu-close');
 
-        mobileMenuOpen?.addEventListener('click', () => {
-            mobileMenuOverlay?.classList.remove('hidden');
-        });
+        if (mobileMenuOpen && mobileMenuOverlay && mobileMenuClose) {
+            mobileMenuOpen.addEventListener('click', () => {
+                mobileMenuOverlay.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            });
 
-        mobileMenuClose?.addEventListener('click', () => {
-            mobileMenuOverlay?.classList.add('hidden');
-        });
-
-        // Close on overlay click
-        mobileMenuOverlay?.addEventListener('click', (e) => {
-            if (e.target === mobileMenuOverlay) {
+            mobileMenuClose.addEventListener('click', () => {
                 mobileMenuOverlay.classList.add('hidden');
+                document.body.style.overflow = '';
+            });
+
+            // Close on overlay click
+            mobileMenuOverlay.addEventListener('click', (e) => {
+                if (e.target === mobileMenuOverlay) {
+                    mobileMenuOverlay.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }
+            });
+
+            // Close on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !mobileMenuOverlay.classList.contains('hidden')) {
+                    mobileMenuOverlay.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+
+        // Modal Management
+        let currentUserEmail = '';
+        let currentUserId = '';
+        let currentUserName = '';
+
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // User Management Dropdown Functions
+        function toggleUserDropdown(userId) {
+            const dropdown = document.getElementById(`dropdown-${userId}`);
+            const icon = document.getElementById(`icon-${userId}`);
+
+            if (dropdown && icon) {
+                if (dropdown.classList.contains('hidden')) {
+                    dropdown.classList.remove('hidden');
+                    icon.classList.add('rotate-180');
+                } else {
+                    dropdown.classList.add('hidden');
+                    icon.classList.remove('rotate-180');
+                }
+            }
+        }
+
+        function viewUserDetails(userId, userName, userEmail, userRole, emailVerified) {
+            document.getElementById('detailName').textContent = userName;
+            document.getElementById('detailEmail').textContent = userEmail;
+            document.getElementById('detailRole').textContent = userRole.replace('_', ' ');
+            document.getElementById('detailVerified').textContent = emailVerified ? 'Verified' : 'Unverified';
+            document.getElementById('detailUserId').textContent = userId;
+            openModal('viewDetailsModal');
+        }
+
+        function verifyUserEmail(userId, userEmail) {
+            currentUserId = userId;
+            currentUserEmail = userEmail;
+            document.getElementById('verifyEmailAddress').textContent = userEmail;
+            openModal('verifyEmailModal');
+        }
+
+        async function confirmVerifyEmail() {
+            const formData = new FormData();
+            formData.append('user_id', currentUserId);
+
+            try {
+                const response = await fetch('/super-admin/activate-user', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    closeModal('verifyEmailModal');
+                    window.location.reload();
+                } else {
+                    const error = await response.text();
+                    alert('Error verifying email: ' + error);
+                }
+            } catch (error) {
+                alert('Error verifying email: ' + error.message);
+            }
+        }
+
+        function sendPasswordReset(userEmail) {
+            currentUserEmail = userEmail;
+            document.getElementById('resetEmailAddress').textContent = userEmail;
+            openModal('passwordResetModal');
+        }
+
+        async function confirmPasswordReset() {
+            const formData = new FormData();
+            formData.append('email', currentUserEmail);
+
+            try {
+                const response = await fetch('/super-admin/send-password-reset', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    closeModal('passwordResetModal');
+                } else {
+                    const error = await response.text();
+                    alert('Error sending password reset: ' + error);
+                }
+            } catch (error) {
+                alert('Error sending password reset: ' + error.message);
+            }
+        }
+
+        function promoteToAdmin(userId, userName) {
+            currentUserId = userId;
+            currentUserName = userName;
+            document.getElementById('roleUserName').textContent = userName;
+            openModal('changeRoleModal');
+        }
+
+        async function confirmChangeRole() {
+            const newRole = document.getElementById('newRole').value;
+            const formData = new FormData();
+            formData.append('user_id', currentUserId);
+            formData.append('role', newRole);
+
+            try {
+                const response = await fetch('/super-admin/update-user-role', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    closeModal('changeRoleModal');
+                    window.location.reload();
+                } else {
+                    const error = await response.text();
+                    alert('Error changing role: ' + error);
+                }
+            } catch (error) {
+                alert('Error changing role: ' + error.message);
+            }
+        }
+
+        function deleteUser(userId, userName) {
+            currentUserId = userId;
+            currentUserName = userName;
+            document.getElementById('deleteUserName').textContent = userName;
+            openModal('deleteUserModal');
+        }
+
+        async function confirmDeleteUser() {
+            const formData = new FormData();
+            formData.append('user_id', currentUserId);
+
+            try {
+                const response = await fetch('/super-admin/delete-user', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    closeModal('deleteUserModal');
+                    window.location.reload();
+                } else {
+                    const error = await response.text();
+                    alert('Error deleting user: ' + error);
+                }
+            } catch (error) {
+                alert('Error deleting user: ' + error.message);
+            }
+        }
+
+        // Close modals on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                ['viewDetailsModal', 'verifyEmailModal', 'passwordResetModal', 'changeRoleModal', 'deleteUserModal'].forEach(closeModal);
             }
         });
-
     </script>
 </body>
 </html>

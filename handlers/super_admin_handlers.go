@@ -284,6 +284,54 @@ func SuperAdminActivateUserHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"status": "success", "message": "User activated successfully"})
 }
 
+// SuperAdminSendPasswordResetHandler sends a password reset email to a user
+func SuperAdminSendPasswordResetHandler(w http.ResponseWriter, r *http.Request) {
+	claims, ok := r.Context().Value("userClaims").(*models.Claims)
+	if !ok || !utils.IsSuperAdmin(claims.Role) {
+		http.Error(w, "Forbidden", http.StatusForbidden)
+		return
+	}
+
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	email := r.FormValue("email")
+	if email == "" {
+		http.Error(w, "Missing email", http.StatusBadRequest)
+		return
+	}
+
+	// Generate password reset token
+	token := utils.GenerateSecureToken()
+	expiresAt := utils.GetPasswordResetExpiry()
+
+	// Set the token in the database
+	err := database.Queries.SetPasswordResetToken(context.Background(), db.SetPasswordResetTokenParams{
+		Email:                email,
+		PasswordResetToken:   pgtype.Text{String: token, Valid: true},
+		PasswordResetExpires: pgtype.Timestamptz{Time: expiresAt, Valid: true},
+	})
+	if err != nil {
+		log.Printf("Error setting password reset token: %v", err)
+		http.Error(w, "Failed to set password reset token", http.StatusInternalServerError)
+		return
+	}
+
+	// Send password reset email
+	emailService := utils.NewEmailService()
+	err = emailService.SendPasswordResetEmail(email, token)
+	if err != nil {
+		log.Printf("Error sending password reset email: %v", err)
+		http.Error(w, "Failed to send password reset email", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"status": "success", "message": "Password reset email sent successfully"})
+}
+
 // SuperAdminVehicleManagementHandler handles vehicle allocation and management
 func SuperAdminVehicleManagementHandler(w http.ResponseWriter, r *http.Request) {
 	claims, ok := r.Context().Value("userClaims").(*models.Claims)

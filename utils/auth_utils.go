@@ -105,3 +105,14 @@ func CanAccessAdmin(role string) bool {
 func CanAccessSuperAdmin(role string) bool {
 	return IsSuperAdmin(role)
 }
+
+// GenerateSecureToken generates a secure random token for password resets
+func GenerateSecureToken() string {
+	token, _ := GenerateVerificationToken()
+	return token
+}
+
+// GetPasswordResetExpiry returns the expiry time for password reset tokens (1 hour from now)
+func GetPasswordResetExpiry() time.Time {
+	return time.Now().Add(1 * time.Hour)
+}
