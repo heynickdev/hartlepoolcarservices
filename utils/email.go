@@ -202,3 +202,37 @@ func (e *EmailService) SendPasswordResetEmail(to, token string) error {
 
 	return e.SendEmail(to, subject, body)
 }
+
+func (e *EmailService) SendAppointmentNotification(userName, userEmail, carRegistration, carMake, appointmentTitle, appointmentDescription, appointmentDateTime string) error {
+	subject := "New Appointment Created - Hartlepool Car Services"
+	body := fmt.Sprintf(`
+		<html>
+		<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+			<div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+				<h2 style="color: #2c3e50;">New Appointment Notification</h2>
+				<p>A new appointment has been created by a customer.</p>
+
+				<div style="background-color: #f8f9fa; border-left: 4px solid #3498db; padding: 15px; margin: 20px 0;">
+					<h3 style="margin-top: 0; color: #2c3e50;">Appointment Details</h3>
+					<p style="margin: 8px 0;"><strong>Customer Name:</strong> %s</p>
+					<p style="margin: 8px 0;"><strong>Customer Email:</strong> %s</p>
+					<p style="margin: 8px 0;"><strong>Vehicle:</strong> %s - %s</p>
+					<p style="margin: 8px 0;"><strong>Service:</strong> %s</p>
+					<p style="margin: 8px 0;"><strong>Description:</strong> %s</p>
+					<p style="margin: 8px 0;"><strong>Date & Time:</strong> %s</p>
+				</div>
+
+				<p style="margin-top: 20px;">Please log in to the admin dashboard to review and confirm this appointment.</p>
+
+				<hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
+				<p style="font-size: 12px; color: #7f8c8d;">
+					This is an automated notification from Hartlepool Car Services.<br>
+					Email: info@hartlepoolcarservices.com
+				</p>
+			</div>
+		</body>
+		</html>
+	`, userName, userEmail, carRegistration, carMake, appointmentTitle, appointmentDescription, appointmentDateTime)
+
+	return e.SendEmail("info@hartlepoolcarservices.com", subject, body)
+}

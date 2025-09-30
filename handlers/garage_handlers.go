@@ -282,6 +282,36 @@ func CreateAppointmentHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Send email notification to admin
+	user, err := database.Queries.GetUserByID(context.Background(), pgtype.UUID{Bytes: claims.UserID, Valid: true})
+	if err == nil {
+		emailService := utils.NewEmailService()
+		descriptionText := description
+		if descriptionText == "" {
+			descriptionText = "No description provided"
+		}
+		formattedDateTime := datetime.Format("Monday, January 2, 2006 at 3:04 PM")
+
+		carMake := car.Make.String
+		if !car.Make.Valid || carMake == "" {
+			carMake = "Unknown"
+		}
+
+		err = emailService.SendAppointmentNotification(
+			user.Name,
+			user.Email,
+			car.RegistrationNumber,
+			carMake,
+			title,
+			descriptionText,
+			formattedDateTime,
+		)
+		if err != nil {
+			log.Printf("Error sending appointment notification email: %v", err)
+			// Don't fail the appointment creation if email fails
+		}
+	}
+
 	// Redirect back to vehicle detail page
 	http.Redirect(w, r, "/vehicle?id="+carIDStr+"&success=Appointment+created+successfully", http.StatusSeeOther)
 }
