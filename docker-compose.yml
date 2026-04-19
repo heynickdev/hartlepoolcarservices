@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-supersecret}
+      POSTGRES_DB: ${DB_NAME:-hcs_db}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - internal
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --requirepass ${REDIS_PASSWORD:-supersecretredis}
+    volumes:
+      - redisdata:/data
+    networks:
+      - internal
+    restart: unless-stopped
+
+  migrations:
+    image: ghcr.io/pressly/goose:latest
+    depends_on:
+      db:
+        condition: service_started
+    volumes:
+      - ./migrations:/migrations
+    command: >
+      -dir /migrations 
+      postgres 
+      "postgres://${DB_USER:-admin}:${DB_PASSWORD:-supersecret}@db:5432/${DB_NAME:-hcs_db}?sslmode=disable" 
+      up
+    networks:
+      - internal
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DB_URL=postgres://${DB_USER:-admin}:${DB_PASSWORD:-supersecret}@db:5432/${DB_NAME:-hcs_db}?sslmode=disable
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-supersecretredis}@redis:6379/0
+      - PORT=8080
+    depends_on:
+      db:
+        condition: service_started
+      redis:
+        condition: service_started
+    networks:
+      - internal
+      - dokploy-network
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.hcs-api.rule=Host(`hartlepoolcarservices.com`) || Host(`www.hartlepoolcarservices.com`)"
+      - "traefik.http.services.hcs-api.loadbalancer.server.port=8080"
+      - "traefik.docker.network=dokploy-network"
+
+volumes:
+  pgdata:
+  redisdata:
+
+networks:
+  internal:
+    driver: bridge
+  dokploy-network:
+    external: true
