@@ -30,8 +30,18 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      - DB_URL=postgres://${DB_USER:-admin}:${DB_PASSWORD:-supersecret}@db:5432/${DB_NAME:-hcs_db}?sslmode=disable
+      # This constructs the correct URL pointing to the internal 'db' container
+      - DATABASE_URL=postgres://${DB_USER:-admin}:${DB_PASSWORD:-supersecret}@db:5432/${DB_NAME:-hcs_db}?sslmode=disable
+      - JWT_SECRET=${JWT_SECRET}
       - PORT=8080
+      - ADMIN_EMAIL=${ADMIN_EMAIL}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD}
+      - DVLA_API_KEY=${DVLA_API_KEY}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_EMAIL=${SMTP_EMAIL}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - BASE_URL=${BASE_URL}
     depends_on:
       db:
         condition: service_started
@@ -41,8 +51,7 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.hcs-app.rule=Host(`hartlepoolcarservices.com`) ||
-        Host(`www.hartlepoolcarservices.com`)"
+      - "traefik.http.routers.hcs-app.rule=Host(`hartlepoolcarservices.com`) || Host(`www.hartlepoolcarservices.com`)"
       - "traefik.http.services.hcs-app.loadbalancer.server.port=8080"
       - "traefik.docker.network=dokploy-network"
 
