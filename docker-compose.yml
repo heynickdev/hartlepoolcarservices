@@ -17,6 +17,7 @@ services:
       - GOOSE_DRIVER=postgres
       - GOOSE_DBSTRING=postgres://${DB_USER:-admin}:${DB_PASSWORD:-supersecret}@db:5432/${DB_NAME:-hcs_db}?sslmode=disable
       - GOOSE_COMMAND=up
+      - GOOSE_MIGRATION_DIR=/migrations
     depends_on:
       db:
         condition: service_started
@@ -30,7 +31,6 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      # This constructs the correct URL pointing to the internal 'db' container
       - DATABASE_URL=postgres://${DB_USER:-admin}:${DB_PASSWORD:-supersecret}@db:5432/${DB_NAME:-hcs_db}?sslmode=disable
       - JWT_SECRET=${JWT_SECRET}
       - PORT=8080
@@ -51,7 +51,8 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.hcs-app.rule=Host(`hartlepoolcarservices.com`) || Host(`www.hartlepoolcarservices.com`)"
+      - "traefik.http.routers.hcs-app.rule=Host(`hartlepoolcarservices.com`) ||
+        Host(`www.hartlepoolcarservices.com`)"
       - "traefik.http.services.hcs-app.loadbalancer.server.port=8080"
       - "traefik.docker.network=dokploy-network"
       - "traefik.http.routers.hcs-app.tls=true"
