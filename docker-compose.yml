@@ -11,21 +11,6 @@ services:
       - internal
     restart: unless-stopped
 
-  migrations:
-    image: ghcr.io/kukymbr/goose-docker:3.27.0
-    environment:
-      - GOOSE_DRIVER=postgres
-      - GOOSE_DBSTRING=postgres://${DB_USER:-admin}:${DB_PASSWORD:-supersecret}@db:5432/${DB_NAME:-hcs_db}?sslmode=disable
-      - GOOSE_COMMAND=up
-      - GOOSE_MIGRATION_DIR=/migrations
-    depends_on:
-      db:
-        condition: service_started
-    volumes:
-      - ./db/migrations:/migrations
-    networks:
-      - internal
-
   app:
     build:
       context: .
@@ -51,8 +36,7 @@ services:
     restart: unless-stopped
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.hcs-app.rule=Host(`hartlepoolcarservices.com`) ||
-        Host(`www.hartlepoolcarservices.com`)"
+      - "traefik.http.routers.hcs-app.rule=Host(`hartlepoolcarservices.com`) || Host(`www.hartlepoolcarservices.com`)"
       - "traefik.http.services.hcs-app.loadbalancer.server.port=8080"
       - "traefik.docker.network=dokploy-network"
       - "traefik.http.routers.hcs-app.tls=true"

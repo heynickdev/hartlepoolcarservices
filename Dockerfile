@@ -40,9 +40,12 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 # Import the compiled binary
 COPY --from=builder /go-backend /go-backend
 
-# Import the required directories for the frontend
+# Import the frontend templates and static files
 COPY --from=builder /app/static /static
 COPY --from=builder /app/templates /templates
+
+# Import the correct root migrations folder
+COPY --from=builder /app/migrations /migrations
 
 # Enforce the unprivileged user
 USER appuser:appuser
