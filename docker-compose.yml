@@ -54,6 +54,7 @@ services:
       - "traefik.http.routers.hcs-app.rule=Host(`hartlepoolcarservices.com`) || Host(`www.hartlepoolcarservices.com`)"
       - "traefik.http.services.hcs-app.loadbalancer.server.port=8080"
       - "traefik.docker.network=dokploy-network"
+      - "traefik.http.routers.hcs-app.tls=true"
 
 volumes:
   pgdata:
